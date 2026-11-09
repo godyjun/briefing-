@@ -9,11 +9,10 @@
   <meta name="apple-mobile-web-app-title" content="모닝브리핑">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%230f172a'/%3E%3Crect x='6' y='6' width='108' height='108' rx='24' fill='none' stroke='%2314b8a6' stroke-width='4'/%3E%3Ctext x='60' y='74' font-size='54' text-anchor='middle'%3E%F0%9F%8E%99%EF%B8%8F%3C/text%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%230f172a'/%3E%3Crect x='6' y='6' width='108' height='108' rx='24' fill='none' stroke='%2314b8a6' stroke-width='4'/%3E%3Ctext x='60' y='74' font-size='54' text-anchor='middle'%3E%F0%9F%8E%99%EF%B8%8F%3C/text%3E%3C/svg%3E">
-  <title>영준님의 모닝 라디오 시사·경제 브리핑 전용 앱 (날짜별 아카이브 통합본)</title>
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%230f172a'/%3E%3Crect x='6' y='6' width='108' height='108' rx='24' fill='none' stroke='%2314b8a6' stroke-width='4'/%3E%3Ctext x='60' y='74' font-size='54' text-anchor='middle'%3E%F0%9F%8E%99%EF%B8%8F%3C/text%3E%3C/svg%3E">
+  <title>영준님의 모닝 라디오 시사·경제 브리핑 전용 앱</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script>
-    // 세로 화면(스마트폰)에서는 무조건 1단, 가로 화면(태블릿/가로모드)에서만 2단 데스크탑 모드 작동
     tailwind.config = {
       theme: {
         screens: {
@@ -31,7 +30,6 @@
       background-color: #0b1120;
       color: #f8fafc;
     }
-    /* 세로 모드일 때 양옆 여백 없이 화면 폭 100% 꽉 채우기 */
     @media (orientation: portrait) {
       .max-w-4xl {
         max-width: 100% !important;
@@ -77,11 +75,9 @@
     }
   </style>
   <script>
-    // [핵심] 미니바(sticky)가 고장나지 않으면서도 2번 사진(100% 확대) 크기로 정확히 맞춰주는 스케일러
     function syncExactMobileSize() {
       const isPortrait = window.innerHeight > window.innerWidth;
       if (isPortrait && window.innerWidth > 500) {
-        // 브라우저가 데스크탑 뷰포트(980px 등)로 축소했을 때 기준 폰트 크기를 비례 확대해 2번 사진과 100% 동일하게 만듦
         const ratio = window.innerWidth / 390;
         document.documentElement.style.fontSize = (16 * ratio) + 'px';
       } else {
@@ -94,42 +90,47 @@
 </head>
 
 <body class="min-h-screen antialiased pb-16">
-    <!-- In-Page Modal: How to Use as a Standalone Mobile App -->
-    <div id="installGuideModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-teal-500/40 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-3.5">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
-          <h3 class="text-base font-extrabold text-white flex items-center gap-1.5">
-            📲 스마트폰 홈 화면에 '전용 앱'으로 꺼내두는 법
-          </h3>
-          <button id="closeInstallGuideBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">
-            닫기 ✕
-          </button>
+  <!-- 우측 상단 미니 동기화 상태 배지 -->
+  <div id="gas-sync-badge" class="hidden fixed top-3 right-3 z-50 px-3 py-1.5 rounded-full text-[11px] font-bold bg-slate-900/95 text-sky-400 border border-sky-400/40 shadow-lg backdrop-blur-md transition-opacity duration-300">
+    🔄 최신 브리핑 확인 중...
+  </div>
+
+  <!-- 홈화면 앱 설치 안내 모달 -->
+  <div id="installGuideModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-teal-500/40 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-3.5">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <h3 class="text-base font-extrabold text-white flex items-center gap-1.5">
+          📲 스마트폰 홈 화면에 '전용 앱'으로 꺼내두는 법
+        </h3>
+        <button id="closeInstallGuideBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">
+          닫기 ✕
+        </button>
+      </div>
+      <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+        <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3">
+          <div class="font-bold text-teal-300 mb-1">방법 1. 구글 드라이브 실시간 자동 연동</div>
+          <p>매일 아침 새로운 브리핑 메일이 도착하면 자동으로 데이터베이스에 누적되며, 앱을 열면 즉시 가장 최신 날짜의 브리핑이 표시됩니다.</p>
         </div>
-        <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-          <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3">
-            <div class="font-bold text-teal-300 mb-1">방법 1. 제미나이 앱을 홈 화면 위젯·바로가기로 실행 (자동 업데이트 연동)</div>
-            <p>매일 아침 7시 30분 새로운 브리핑 데이터가 이 채팅방의 웹앱 카드로 자동 누적 업데이트됩니다. 스마트폰 홈 화면에 <strong class="text-white">제미나이(Gemini) 앱 아이콘</strong>을 맨 앞줄에 배치해 두시면, 아침에 앱을 열자마자 최신 브리핑 웹앱 카드를 한 번의 터치로 전체화면 앱처럼 실행하실 수 있습니다.</p>
-          </div>
-          <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3">
-            <div class="font-bold text-sky-300 mb-1">방법 2. 모바일 브라우저(크롬·사파리)에서 '홈 화면에 추가 (웹앱 설치)'</div>
-            <p>우측 상단 공유/외부 브라우저로 열기 또는 파일을 다운로드해 크롬(안드로이드)·사파리(아이폰)에서 연 뒤 메뉴의 <strong class="text-white">[홈 화면에 추가]</strong>를 누르시면, 상단 주소창이 없는 <strong class="text-white">'모닝브리핑' 단독 앱 아이콘(🎙️)</strong>으로 바탕화면에 생성됩니다.</p>
-          </div>
+        <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-3">
+          <div class="font-bold text-sky-300 mb-1">방법 2. 모바일 브라우저에서 '홈 화면에 추가'</div>
+          <p>크롬(안드로이드)·사파리(아이폰) 메뉴의 <strong class="text-white">[홈 화면에 추가]</strong>를 누르시면 상단 주소창이 없는 <strong class="text-white">'모닝브리핑' 단독 앱 아이콘(🎙️)</strong>으로 생성됩니다.</p>
         </div>
       </div>
     </div>
+  </div>
 
   <div class="max-w-4xl mx-auto px-3.5 pt-4 sm:px-6">
-    <!-- Top App Header & Date Archive Selector Bar -->
+    <!-- 상단 헤더 & 날짜 선택 바 -->
     <header class="bg-gradient-to-br from-blue-950 via-slate-900 to-teal-950 border border-slate-700/80 rounded-2xl p-4 sm:p-5 shadow-xl mb-3.5">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
         <div class="flex items-center gap-2">
           <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            영준님 전용 모닝 브리핑 앱 · 매일 07:30 자동 업데이트
+            영준님 전용 모닝 브리핑 앱 · 매일 자동 업데이트
           </span>
         </div>
         <div class="flex items-center gap-2">
-          <span id="headerDateLabel" class="text-[11px] font-semibold text-teal-300 tracking-wider">2026.11.06 (금) 최신판</span>
+          <span id="headerDateLabel" class="text-[11px] font-semibold text-teal-300 tracking-wider">실시간 동기화 중...</span>
           <button id="openInstallGuideBtn" type="button" class="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-[11px] font-bold text-teal-200 transition">
             📲 홈화면 앱 추가 안내
           </button>
@@ -137,31 +138,29 @@
       </div>
 
       <h1 id="headerMainTitle" class="text-lg sm:text-2xl font-extrabold text-white tracking-tight mb-1">
-        2026년 11월 6일 (금) 평일 종합 시사·경제 브리핑
+        최신 시사·경제 브리핑을 불러오는 중입니다...
       </h1>
       <p id="headerSubTitle" class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3.5">
-        구독 뉴스레터(어피티·매경 디깅·뉴닉 데일리·트렌드라이트·연금술사) 전 분야 핵심 요약 및 매크로 점검 | 수신: 신영준 (영준님)
+        구글 드라이브 아카이브에서 영준님의 최신 브리핑 데이터를 동기화하고 있습니다.
       </p>
 
-      <!-- Date Archive Selector Bar -->
+      <!-- 날짜별 아카이브 선택 바 -->
       <div class="pt-3 border-t border-slate-700/70">
         <div class="flex items-center justify-between gap-2 mb-2">
           <span class="text-xs font-bold text-teal-300 flex items-center gap-1.5">
-            📅 날짜별 브리핑 보관함 (날짜를 누르면 해당일 브리핑 카드와 라디오 대본이 바로 전환됩니다)
+            📅 날짜별 브리핑 보관함 (터치 시 해당일 브리핑 및 라디오 대본 즉시 전환)
           </span>
           <select id="dateSelectDropdown" class="bg-slate-900/90 border border-slate-600 rounded-lg px-2.5 py-1 text-xs font-bold text-white" title="날짜 빠른 선택">
           </select>
         </div>
         <div id="datePillsContainer" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-          <!-- Populated dynamically by JS -->
         </div>
       </div>
     </header>
 
-    <!-- Sticky Audio Player Control Card (Supports Full Mode & Compact Mini-Bar Mode on Scroll) -->
+    <!-- 오디오 플레이어 컨트롤 카드 -->
     <section id="stickyPlayer" class="sticky top-2 z-30 bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-2xl p-3.5 sm:p-4 shadow-2xl mb-4">
-      
-      <!-- 1. COMPACT MINI-BAR VIEW (Shown automatically when scrolling down or manually minimized) -->
+      <!-- 1. 미니 플레이어 뷰 -->
       <div id="miniPlayerView" class="hidden">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 min-w-0 flex-1">
@@ -170,49 +169,41 @@
             </span>
             <div class="min-w-0 flex-1">
               <div id="miniTrackTitle" class="text-xs font-bold text-white truncate">
-                1부. 국내외 금융시장 및 핵심 거시경제 지표
+                브리핑 로딩 중...
               </div>
               <div id="miniStatusLine" class="text-[10px] text-slate-400 truncate">
-                문장 1/25 · 1.3x
+                대기 중 · 1.3x
               </div>
             </div>
           </div>
 
           <div class="flex items-center gap-1 shrink-0">
-            <button id="miniPrevBtn" type="button" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs border border-slate-700" title="이전 코너">
-              ⏮
-            </button>
+            <button id="miniPrevBtn" type="button" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs border border-slate-700" title="이전 코너">⏮</button>
             <button id="miniPlayPauseBtn" type="button" class="px-3 py-1.5 rounded-lg bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 text-xs font-extrabold shadow flex items-center gap-1">
               <span id="miniPlayPauseIcon">▶</span>
               <span id="miniPlayPauseLabel">재생</span>
             </button>
-            <button id="miniNextBtn" type="button" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs border border-slate-700" title="다음 코너">
-              ⏭
-            </button>
-            <button id="miniSpeedBtn" type="button" class="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-teal-300 text-[11px] font-bold border border-slate-700" title="배속 변경">
-              1.3x
-            </button>
-            <button id="expandPlayerBtn" type="button" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700" title="플레이어 펼치기">
-              펼치기 ▼
-            </button>
+            <button id="miniNextBtn" type="button" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs border border-slate-700" title="다음 코너">⏭</button>
+            <button id="miniSpeedBtn" type="button" class="px-2 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-teal-300 text-[11px] font-bold border border-slate-700" title="배속 변경">1.3x</button>
+            <button id="expandPlayerBtn" type="button" class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700" title="플레이어 펼치기">펼치기 ▼</button>
           </div>
         </div>
         <div class="w-full h-1 bg-slate-800 rounded-full overflow-hidden mt-2">
-          <div id="miniProgressBar" class="h-full bg-gradient-to-r from-blue-500 to-teal-400 transition-all duration-300" style="width: 4%;"></div>
+          <div id="miniProgressBar" class="h-full bg-gradient-to-r from-blue-500 to-teal-400 transition-all duration-300" style="width: 0%;"></div>
         </div>
       </div>
 
-      <!-- 2. FULL PLAYER VIEW -->
+      <!-- 2. 전체 플레이어 뷰 -->
       <div id="fullPlayerView">
         <div class="flex items-start justify-between gap-2 mb-2.5">
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-2 mb-0.5">
               <span id="currentPartBadge" class="text-[11px] font-bold text-teal-400 uppercase tracking-wide">
-                PART 1 / 5 · 마켓 &amp; 매크로
+                PART 1 / 5
               </span>
             </div>
             <h2 id="currentTrackTitle" class="text-sm sm:text-base font-bold text-white truncate">
-              1부. 국내외 금융시장 및 핵심 거시경제(Macro) 지표
+              브리핑 데이터를 준비하고 있습니다...
             </h2>
           </div>
 
@@ -232,35 +223,25 @@
 
         <div class="mb-2.5">
           <div class="flex items-center justify-between gap-2 text-[11px] text-slate-400 mb-1">
-            <span id="statusText" class="truncate">대기 중 (스크롤을 내리면 이 창이 1줄 미니바로 자동 축소됩니다)</span>
-            <span id="progressCounter" class="shrink-0 font-semibold text-slate-300">코너 1/5 · 문장 1/25</span>
+            <span id="statusText" class="truncate">대기 중 (스크롤을 내리면 1줄 미니바로 자동 축소됩니다)</span>
+            <span id="progressCounter" class="shrink-0 font-semibold text-slate-300">코너 1/5</span>
           </div>
           <div class="w-full h-2 bg-slate-700 rounded-full overflow-hidden">
-            <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 to-teal-400 transition-all duration-300" style="width: 4%;"></div>
+            <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 to-teal-400 transition-all duration-300" style="width: 0%;"></div>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
           <div class="flex flex-wrap items-center gap-1.5">
-            <button id="prevBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1">
-              ⏮ 이전 코너
-            </button>
-            <button id="prevSentBtn" type="button" class="px-2 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-300 text-xs font-semibold border border-slate-700/80 transition" title="이전 문장">
-              ◀ 문장
-            </button>
+            <button id="prevBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1">⏮ 이전 코너</button>
+            <button id="prevSentBtn" type="button" class="px-2 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-300 text-xs font-semibold border border-slate-700/80 transition">◀ 문장</button>
             <button id="playPauseBtn" type="button" class="px-4 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 text-xs sm:text-sm font-extrabold shadow-md transition flex items-center gap-1.5">
               <span id="playPauseIcon">▶</span>
               <span id="playPauseLabel">전체 브리핑 재생</span>
             </button>
-            <button id="nextSentBtn" type="button" class="px-2 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-300 text-xs font-semibold border border-slate-700/80 transition" title="다음 문장">
-              문장 ▶
-            </button>
-            <button id="nextBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1">
-              다음 코너 ⏭
-            </button>
-            <button id="stopBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-semibold border border-slate-700 transition">
-              ⏹ 처음부터
-            </button>
+            <button id="nextSentBtn" type="button" class="px-2 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 active:scale-95 text-slate-300 text-xs font-semibold border border-slate-700/80 transition">문장 ▶</button>
+            <button id="nextBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1">다음 코너 ⏭</button>
+            <button id="stopBtn" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-200 text-xs font-semibold border border-slate-700 transition">⏹ 처음부터</button>
           </div>
 
           <div class="flex flex-wrap items-center gap-1.5">
@@ -287,7 +268,7 @@
       </div>
     </section>
 
-    <!-- SLIDE 01 EXECUTIVE BRIEFING 4-CARD SUMMARY GRID (Dynamic per selected date) -->
+    <!-- 4대 핵심 브리핑 요약 카드 그리드 -->
     <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl mb-5">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div class="flex items-center gap-2">
@@ -295,1542 +276,98 @@
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             SLIDE 01 · EXECUTIVE BRIEFING
           </span>
-          <span id="execSectionTitle" class="text-xs sm:text-sm font-extrabold text-white">오늘의 4대 핵심 브리핑 요약 카드 (프레젠테이션 1페이지)</span>
+          <span id="execSectionTitle" class="text-xs sm:text-sm font-extrabold text-white">핵심 브리핑 요약 카드</span>
         </div>
         <span class="text-[11px] text-slate-400">카드를 터치하면 해당 상세 코너로 이동합니다</span>
       </div>
 
       <div id="execCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <!-- Populated dynamically by JS for selected date -->
       </div>
     </section>
 
-    <!-- Chapter Selector Pills -->
+    <!-- 코너 선택 탭 -->
     <nav id="chapterTabsNav" class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4" aria-label="브리핑 코너 선택">
       <button type="button" data-chapter="0" class="chapter-tab px-3 py-2 rounded-xl text-left border transition bg-teal-500/20 border-teal-400 text-white">
         <div class="text-[10px] font-bold text-teal-300">PART 1</div>
-        <div id="tabLabel0" class="text-xs font-semibold truncate">1부. 증시·매크로</div>
+        <div id="tabLabel0" class="text-xs font-semibold truncate">1부</div>
       </button>
       <button type="button" data-chapter="1" class="chapter-tab px-3 py-2 rounded-xl text-left border transition bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-800">
         <div class="text-[10px] font-bold text-slate-400">PART 2</div>
-        <div id="tabLabel1" class="text-xs font-semibold truncate">2부. 앤트로픽·AI</div>
+        <div id="tabLabel1" class="text-xs font-semibold truncate">2부</div>
       </button>
       <button type="button" data-chapter="2" class="chapter-tab px-3 py-2 rounded-xl text-left border transition bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-800">
         <div class="text-[10px] font-bold text-slate-400">PART 3</div>
-        <div id="tabLabel2" class="text-xs font-semibold truncate">3부. 현대차·롯데</div>
+        <div id="tabLabel2" class="text-xs font-semibold truncate">3부</div>
       </button>
       <button type="button" data-chapter="3" class="chapter-tab px-3 py-2 rounded-xl text-left border transition bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-800">
         <div class="text-[10px] font-bold text-slate-400">PART 4</div>
-        <div id="tabLabel3" class="text-xs font-semibold truncate">4부. 162조기금·보안</div>
+        <div id="tabLabel3" class="text-xs font-semibold truncate">4부</div>
       </button>
       <button type="button" data-chapter="4" class="chapter-tab px-3 py-2 rounded-xl text-left border transition bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-800 col-span-2 sm:col-span-1">
         <div class="text-[10px] font-bold text-slate-400">PART 5</div>
-        <div id="tabLabel4" class="text-xs font-semibold truncate">5부. 테크·오늘일정</div>
+        <div id="tabLabel4" class="text-xs font-semibold truncate">5부</div>
       </button>
     </nav>
 
-    <!-- Main Unabridged Briefing Cards + Collapsible Radio Script Container -->
+    <!-- 상세 브리핑 카드 & 아나운서 대본 컨테이너 -->
     <main id="scriptContainer" class="space-y-5">
-      <!-- Dynamically populated by JS -->
     </main>
   </div>
 
   <script>
     // =========================================================================
-    // MULTI-DATE BRIEFING ARCHIVE DATABASE (Newest First, Cumulative Daily Updates)
+    // 1. 설정 및 초기 데이터 로드 (6일자 하드코딩 완전 제거 + 로컬 캐시 즉시 반영)
     // =========================================================================
-    const briefingsByDate = [
-      // -----------------------------------------------------------------------
-      // 00. 2026-11-06 (금) [최신 추가]
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-11-06",
-        shortLabel: "11/06 (금)",
-        badgeText: "2026.11.06 (금) 최신판",
-        mainTitle: "2026년 11월 6일 (금) 평일 종합 시사·경제 브리핑",
-        subTitle: "한·미 증시 AI 규제 우려 5%대 급락 vs 9월 경상수지 614억 달러 사상 최대, 대미 투자·5대 산업 영향, 가상자산 과세 2029년 유예, 쿠팡 적자·고려아연 자사주 소각, 금융사 37곳 해킹 & 청해부대 확대 외",
-        tabLabels: ["1부. 증시급락·경상흑자", "2부. 대미통상·5대산업", "3부. 코인유예·기업실적", "4부. 금융해킹·청해부대", "5부. 입동한파·오늘일정"],
-        execCards: [
-          {
-            num: "01",
-            color: "rose",
-            jumpChapter: 0,
-            title: "한·미 증시 'AI 규제 발작' 5%대 급락 vs 9월 경상수지 사상 최대",
-            bullets: [
-              "AI 데이터센터 전력·환경 규제 우려로 전일 <strong class='text-rose-400'>코스피 5,383.80(-5.28%)·코스닥 678.41(-5.11%)</strong> 동반 매도 사이드카 발동 급락(외국인 3.4조 순매도). 간밤 뉴욕 증시도 <strong class='text-rose-400'>나스닥 24,315.00(-5.52%, 작년 4월 이후 최대 낙폭)·S&amp;P500 -4.30%(시총 3조 달러 증발)·다우 -3.44%</strong> 폭락.",
-              "반면 한국 9월 경상수지는 반도체 수출(+260%) 호조로 <strong class='text-emerald-400'>614억 6,000만 달러(약 82.5조 원) 월간 사상 최대 흑자</strong> 달성. 안전자산 선호로 미 10년물 국채금리는 <strong class='text-teal-300'>4.837%(-5.3bp)</strong> 하락, 야간 역외 원·달러 환율은 <strong class='text-amber-300'>1,360.53원</strong> 상승, 영란은행(BOE)은 3년 만에 기준금리 25bp 인상."
-            ]
-          },
-          {
-            num: "02",
-            color: "sky",
-            jumpChapter: 1,
-            title: "대미 통상·투자 변수와 한국 5대 주력 산업 명암",
-            bullets: [
-              "대통령 거부권 구조와 한국의 대미 무역흑자(1~10월 <strong class='text-amber-300'>1,023억 달러</strong>, 작년 연간 흑자의 2배 초과)로 인해 관세 및 대미 투자 압박은 지속 전망. 대미 투자 1호 <strong class='text-rose-400'>'텍사스 가스복합발전소'</strong>는 데이터센터 보조금 중단 공약으로 변수가 생긴 반면 <strong class='text-teal-300'>알래스카 LNG</strong> 압박은 완화 전망.",
-              "업종별로는 <strong class='text-rose-400'>반도체</strong>가 단기 데이터센터 규제 우려에 직면했으나 2028년 이후 장기공급계약(LTA)으로 하방 지지. 반면 <strong class='text-emerald-400'>자동차(현지 전기차 보조금 기대)·이차전지/태양광(IRA 세제 혜택 복원 기대)·바이오(CDMO)·조선(마스가 프로젝트)</strong>은 긍정적 흐름 전망."
-            ]
-          },
-          {
-            num: "03",
-            color: "emerald",
-            jumpChapter: 2,
-            title: "가상자산 과세 2029년 유예, 쿠팡 적자 & 고려아연 자사주 51% 소각",
-            bullets: [
-              "정부가 내년 시행 예정이던 <strong class='text-emerald-400'>가상자산 소득 과세를 2029년으로 2년 추가 유예(4번째 연기)</strong>하고 <strong class='text-teal-300'>3년 손실 이월공제</strong> 추진 공식화. 금융위는 홍콩H지수 ELS 불완전판매 은행·증권사 13곳에 <strong class='text-amber-300'>과징금 3,712억 원</strong> 부과.",
-              "<strong class='text-rose-400'>쿠팡</strong>은 물류센터 화재·원가 부담으로 3분기 영업손실 6,423억 원(누적 적자 1.8조 원 초과) 기록. 반면 <strong class='text-emerald-400'>고려아연</strong>은 내년 1월 자사주 51.4% 소각·액면분할 추진, <strong class='text-emerald-400'>SKT·LGU+(AI DC 매출 급증)·현대백화점(영업익 +30%)</strong>은 호실적, 분양가 25% 선납 <strong class='text-sky-300'>지분적립형 공공주택</strong> 공급."
-            ]
-          },
-          {
-            num: "04",
-            color: "amber",
-            jumpChapter: 3,
-            title: "금융사 37곳 해킹(47만 건 유출), 청해부대 확대 & 입동 영하권 한파",
-            bullets: [
-              "최근 한 달간 <strong class='text-rose-400'>금융사 37곳 해킹으로 개인정보 47.3만 건 유출·회삿돈 10억 원 도난</strong> 확인, 금융사 580곳 전수조사 착수. 국방부는 <strong class='text-sky-300'>청해부대 작전구역을 호르무즈 인근(오만 남방 외해)까지 2배 확대(395명)</strong>하는 동의안 국회 제출.",
-              "국회 <strong class='text-amber-300'>'조작기소 특검법' 본회의 상정 및 국민의힘 필리버스터</strong> 돌입, 경기 연천 산란계 농장 올겨울 첫 고병원성 AI 발생(계란 한 판 7,000원), 내일(11/7 입동) <strong class='text-sky-300'>서울 아침 영하 1도(체감 영하 5도)</strong> 추위 및 오늘 밤 <strong class='text-white'>미 10월 고용보고서·오늘 네이버 멤버십 갱신일</strong>."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · SLIDE 02 · 마켓 & 매크로 대시보드",
-            title: "1부. 한·미 증시 'AI 규제 공포' 5%대 급락, 영란은행 금리 인상 & 9월 경상수지 사상 최대",
-            summaryCardHtml: `
-              <div class="space-y-3.5">
-                <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                  전일(11월 5일) 국내 증시는 미국 내 AI 데이터센터 전력·용수 규제 강화 우려가 부각되며 외국인이 코스피에서만 3조 4,000억 원 가까이 순매도해 동반 매도 사이드카가 발동되었고, <strong class="text-rose-400">코스피 5,383.80(-5.28%, ▼300.00p — 7개월 최저)</strong>, <strong class="text-rose-400">코스닥 678.41(-5.11%, ▼36.54p)</strong>로 급락 마감했습니다(<a href="https://www.yonhapnewstv.co.kr/news/AKR20261105153607hBD" target="_blank" class="text-teal-300 underline">연합뉴스TV</a>). 간밤 뉴욕 증시 역시 반도체지수(-12.25%)와 네오클라우드 급락 등 기술주 투매가 번지며 <strong class="text-rose-400">나스닥 24,315.00(-5.52%, 작년 4월 이후 최대 낙폭)</strong>, <strong class="text-rose-400">S&amp;P500 7,354선(-4.30%, 시총 3조 달러 증발)</strong>, <strong class="text-rose-400">다우존스 51,523.06(-3.44%)</strong>으로 폭락했습니다(<a href="https://www.newspim.com/news/view/20261106000030" target="_blank" class="text-teal-300 underline">뉴스핌</a>). 반면 한국 9월 경상수지는 반도체 수출(+260%)에 힘입어 <strong class="text-emerald-400">614억 6,000만 달러(약 82.5조 원)로 월간 사상 최대 흑자</strong>를 달성했습니다(<a href="https://mail.google.com/mail/?authuser=godyjun@gmail.com#all/thread-f:1881053487511128350" target="_blank" class="text-teal-300 underline">뉴닉 데일리</a>).
-                </div>
-                <div class="overflow-x-auto rounded-xl border border-slate-700/90 bg-slate-900/90">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr class="bg-slate-800/95 text-slate-300 border-b border-slate-700">
-                        <th class="py-2.5 px-3 font-bold whitespace-nowrap">지표명</th>
-                        <th class="py-2.5 px-3 font-bold whitespace-nowrap">현재 수치 (종가)</th>
-                        <th class="py-2.5 px-3 font-bold whitespace-nowrap">전일 대비 등락</th>
-                        <th class="py-2.5 px-3 font-bold">핵심 배경 및 시장 시사점</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800 text-slate-200">
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">코스피 (KOSPI)</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">5,383.80</td>
-                        <td class="py-2.5 px-3 font-bold text-rose-400 whitespace-nowrap">▼300.00 (-5.28%)</td>
-                        <td class="py-2.5 px-3 text-slate-300">매도 사이드카 발동·7개월 최저, 외국인 3.39조~3.42조 순매도, 삼성전자(-7.57%)·SK하이닉스(-9.46%) 하락 (<a href="https://www.jnilbo.com/news/articleView.html?idxno=90000080067" target="_blank" class="text-teal-300 underline">전남일보</a>)</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">코스닥 (KOSDAQ)</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">678.41</td>
-                        <td class="py-2.5 px-3 font-bold text-rose-400 whitespace-nowrap">▼36.54 (-5.11%)</td>
-                        <td class="py-2.5 px-3 text-slate-300">동반 매도 사이드카 발동, 코스닥 시총 386조 원으로 축소 (<a href="https://www.industrynews.co.kr/news/articleView.html?idxno=88975" target="_blank" class="text-teal-300 underline">인더스트리뉴스</a>)</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">미 3대 지수 (11/5)</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">나스닥 24,315.00<br><span class="text-[11px] text-slate-400">S&amp;P 7,354 / 다우 51,523.06</span></td>
-                        <td class="py-2.5 px-3 font-bold text-rose-400 whitespace-nowrap">-5.52% / -4.30%<br><span class="text-[11px] text-rose-300">다우 -3.44% (반도체 -12.25%)</span></td>
-                        <td class="py-2.5 px-3 text-slate-300">AI 데이터센터 규제 우려에 네오클라우드(아이렌 -16.5%·네비우스 -14.9%·코어위브 -9.8%) 및 테슬라(-10.8%) 급락</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">미 10년물 / 금 선물</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">금리 연 4.837%<br><span class="text-[11px] text-slate-400">금 $4,113.50/oz</span></td>
-                        <td class="py-2.5 px-3 font-bold text-teal-300 whitespace-nowrap">-5.3bp 하락<br><span class="text-[11px] text-emerald-400">금 +1.0% 상승</span></td>
-                        <td class="py-2.5 px-3 text-slate-300">주식시장 투매에 따른 안전자산 선호 유입으로 미 국채 및 금 가격 동반 강세</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">원·달러 환율 / 유가</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">주간 1,342.10원<br><span class="text-[11px] text-amber-300">야간 역외 1,360.53원</span></td>
-                        <td class="py-2.5 px-3 font-bold text-amber-300 whitespace-nowrap">주간 +0.60원 (+0.04%)<br><span class="text-[11px] text-rose-300">역외 +1.45% / WTI +2.1%↑</span></td>
-                        <td class="py-2.5 px-3 text-slate-300">미 증시 급락 여파 역외 환율 1,360원대 상승, 호르무즈 사건에 WTI 반등 (<a href="https://news.einfomax.co.kr/news/articleView.html?idxno=4443308" target="_blank" class="text-teal-300 underline">연합인포맥스</a>)</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">한국 9월 경상수지 / 영국</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">흑자 $614.6억<br><span class="text-[11px] text-slate-400">약 82조 5,000억 원</span></td>
-                        <td class="py-2.5 px-3 font-bold text-emerald-400 whitespace-nowrap">월간 사상 최대<br><span class="text-[11px] text-sky-300">영란은행 +25bp 인상</span></td>
-                        <td class="py-2.5 px-3 text-slate-300">반도체 수출 +260% 폭증에 경상흑자 역대 최고, 영란은행은 3년 만에 첫 금리 인상 단행 (<a href="https://kr.investing.com/news/forex-news/article-2161369" target="_blank" class="text-teal-300 underline">Investing.com</a>)</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "좋은 아침입니다, 영준님! 11월 6일 금요일, 한 주를 마무리하는 모닝 라디오 시사·경제 브리핑을 시작합니다.",
-              "먼저 1부, 크게 출렁인 국내외 금융시장과 거시경제 지표부터 짚어보겠습니다.",
-              "어제 우리 증시는 미국 내 AI 데이터센터 전력과 용수 규제가 강화될 수 있다는 우려로 외국인이 코스피에서만 3조 4천억 원 가까이 순매도하면서, 양대 시장 모두 매도 사이드카가 발동된 끝에 코스피는 5.28% 내린 5,383.80, 코스닥은 5.11% 내린 678.41로 마감했습니다.",
-              "간밤 뉴욕 증시에서도 AI 설비투자 속도 조절 공포가 번지며 전날 상승분을 모두 반납했는데요, 나스닥이 5.52% 급락한 24,315.00으로 작년 4월 상호관세 충격 이후 최대 낙폭을 기록했고, S&P500은 4.30%, 다우지수는 3.44% 하락했습니다.",
-              "특히 반도체지수가 12.25% 급락하고 아이렌과 네비우스, 코어위브 같은 AI 클라우드 종목들이 10에서 16%대 조정을 받은 반면, 안전자산으로 자금이 몰리며 미국 10년물 국채금리는 연 4.837%로 내려왔고 금 선물은 온스당 4,113달러로 상승했습니다.",
-              "한편 영국 영란은행은 물가 상승 압력에 대응해 3년 만에 기준금리를 0.25%포인트 인상했고, 우리나라 9월 경상수지 흑자는 반도체 수출이 260% 폭증한 덕분에 약 82조 5천억 원, 614억 6천만 달러로 월간 사상 최대 기록을 세웠습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · SLIDE 03 · 통상 · 대미 투자 · 한국 5대 주력 산업 심층",
-            title: "2부. 미 정치 지형 변화에 따른 관세·대미 투자 변수(텍사스 발전소·알래스카 LNG) & 5대 업종 명암",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-amber-300">① [SLIDE 03] 대미 관세 압박 지속 전망과 한국 대미 투자 1호 프로젝트 변수</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">어피티 머니레터 · 매경 디깅</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">관세 압박이 당장 사라지지 않는 이유</strong>: 새 의회 임기는 내년 1월 3일 시작되며 대통령이 법안 거부권을 행사할 경우 상·하원 각각 3분의 2 이상 찬성이 필요해 관세 정책이 곧바로 철회되기는 어렵습니다(<a href="https://mail.google.com/mail/?authuser=godyjun@gmail.com#all/thread-f:1881052969485173158" target="_blank" class="text-teal-300 underline">어피티 머니레터</a>). 오히려 행정부가 가시적 외교 성과를 위해 올해 1~10월 대미 무역흑자가 <strong class="text-amber-300">1,023억 달러(작년 연간 흑자의 2배 초과)</strong>에 달하는 한국에 3,500억 달러 투자 이행 압박을 이어갈 가능성이 있습니다.</li>
-                    <li>• <strong class="text-white">텍사스 가스복합발전소 vs 알래스카 LNG</strong>: 한국의 2,500억 달러 대미 투자 중 1호 프로젝트로 확정된 <strong class="text-rose-300">텍사스 '가스복합발전소 건립 사업'</strong>(대규모 AI 데이터센터 전력 공급 목적)은 지역 내 물·전력 주민 환원 및 데이터센터 보조금 중단 공약 기류로 추진에 변수가 생겼습니다(<a href="https://mail.google.com/mail/?authuser=godyjun@gmail.com#all/thread-f:1881054252222081611" target="_blank" class="text-teal-300 underline">매경 디깅</a>). 반면 미국 측이 강하게 요구했던 <strong class="text-teal-300">알래스카 LNG 개발 사업</strong>은 압박이 줄거나 추진이 늦춰질 전망입니다.</li>
-                    <li>• <strong class="text-white">미국 중간선거 공식 확인 안내</strong>: 미국 중간선거 관련 공식 개표 결과 및 선거 정보는 미국 정부 공식 포털인 <a href="https://www.usa.gov/midterm-elections" target="_blank" class="text-teal-300 underline">USAGov Midterm Elections</a> 및 <a href="https://www.usa.gov/election-results" target="_blank" class="text-teal-300 underline">USAGov Election Results</a>에서 확인하실 수 있습니다.</li>
-                  </ul>
-                </div>
+    const GAS_AUTO_UPDATE_URL = "https://script.google.com/macros/s/AKfycbwZkLE8EXiBiccpCbw2R4X9GljepW4QG04oBgRFnk8wpfK-Tc1lM9iFwDlA6jNB1NkS7Q/exec";
+    const CACHE_KEY = "yj_briefing_live_cache_v3";
 
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-sky-300">② 한국 5대 주력 산업별 영향 총정리 (반도체 · 자동차 · 이차전지/태양광 · 바이오 · 조선)</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-semibold">매경 디깅 · 어피티 · 인베스팅</span>
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-200">
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-rose-300">① 반도체 (단기 규제 우려 vs 장기계약 방어)</strong>: 전기요금·물 사용 반발에 따른 미 데이터센터 인허가 규제가 단기 부담이나, 삼성전자·SK하이닉스는 장기공급계약(LTA)으로 2028년 이후 물량까지 상당수 확보(내년 초 빅테크 2027년 서버·메모리 발주 확인 중요).
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-emerald-300">② 자동차 &amp; ③ 이차전지·태양광 (수혜 기대)</strong>: 미국 현지 생산 전기차 구매 보조금 복원 시 현지 공장을 늘려둔 <strong class="text-white">현대차그룹</strong> 수혜 기대. 인플레이션 감축법(IRA) 내 청정에너지 세액공제 복원 가능성으로 배터리·태양광에 우호적.
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-teal-300">④ 바이오·헬스케어 &amp; ⑤ 조선 (긍정·유지)</strong>: 의료비 보장 및 복지 예산 확대로 한국 바이오 위탁개발생산(CDMO) 수혜 전망. 한·미 조선 협력 <strong class="text-white">'마스가(MASGA)'</strong>는 초당적 지지 사안으로 순항 전망.
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-amber-300">💡 빅테크 FCF 장기 전망 (Investing 레터)</strong>: 단기 조정에도 매그니피센트 7의 합산 잉여현금흐름(FCF)은 현재 약 2,000억 달러에서 2030년 약 6,000억 달러로 4년 내 3배 증가 전망.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "이어서 2부, 오늘 어피티와 매경 디깅, 뉴닉이 공통으로 분석한 대미 통상·투자 환경 변화와 우리 5대 주력 산업 영향입니다.",
-              "먼저 미국의 관세 정책은 새 의회 임기가 내년 1월 3일 시작되는 데다 대통령의 법안 거부권이 있어 당장 사라지기는 어렵다는 분석입니다. 특히 우리나라의 올해 10월까지 대미 무역흑자가 1,023억 달러로 이미 작년 연간 흑자의 두 배를 넘어선 만큼 통상 압박에 대비해야 합니다.",
-              "대미 투자 프로젝트에서도 변수가 생겼는데요, 우리가 1호 사업으로 확정한 텍사스 가스복합발전소는 대규모 AI 데이터센터에 전력을 공급하는 사업인데 지역 내 데이터센터 보조금 중단과 전력·용수 규제 목소리가 커지며 속도 조절 가능성이 제기됐습니다. 반면 미국 측이 강하게 요구해 온 알래스카 LNG 개발 사업은 압박이 줄어들 전망입니다.",
-              "우리 5대 산업별로는 명암이 엇갈립니다. 반도체는 데이터센터 인허가 규제가 단기 투자 심리를 눌렀지만, 삼성전자와 SK하이닉스가 이미 2028년 이후 물량까지 장기공급계약으로 팔아둔 상태라 중장기 수요는 여전히 견고합니다.",
-              "반면 자동차와 이차전지, 태양광은 인플레이션 감축법의 청정에너지 세금 혜택과 미국 생산 전기차 보조금이 복원될 경우 현대차그룹과 배터리 업계에 큰 호재가 될 수 있고, 바이오 위탁개발생산 기업과 초당적 지지를 받는 한미 조선 협력 마스가 프로젝트도 긍정적인 흐름이 기대됩니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · SLIDE 04 & 05 · 세제 · 금융 · 기업 실적 · 부동산",
-            title: "3부. 가상자산 과세 2029년 유예·손실 이월공제, 쿠팡 적자 vs 고려아연 자사주 51% 소각 & 지분적립형 주택",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-teal-300">① [SLIDE 04] 가상자산 과세 2029년으로 2년 추가 유예 &amp; 홍콩 ELS 과징금 3,712억 확정</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-semibold">어피티 · 매경 디깅</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">가상자산 과세 2029년 연기(4번째 유예) 및 손실 이월공제</strong>: 정부가 내년(2027년) 시행 예정이던 가상자산 소득 과세(연 250만 원 공제 후 22% 과세)를 <strong class="text-emerald-400">2029년으로 2년 더 유예</strong>한다고 공식화했습니다. 아울러 세금 부과 시 <strong class="text-teal-300">3년간 손실과 이익을 합산해 과세하는 '손실 이월공제'</strong>도 함께 추진합니다.</li>
-                    <li>• <strong class="text-white">홍콩H지수 ELS 과징금 3,712억 원 &amp; 미 재무부 국채 발행 유지</strong>: 금융위가 홍콩H지수 ELS 불완전판매 은행 7곳·증권사 6곳에 과징금 3,712억 원을 부과했습니다(금감원 초안 약 1.4조 원 대비 감경). 미 재무부는 내년 1월까지 중장기 국채 발행 규모를 직전 분기 수준으로 유지하되 향후 조정 가능성을 열어두었습니다.</li>
-                  </ul>
-                </div>
+    // 캐시가 아예 없는 첫 접속 시 에러를 방지하는 안전한 로딩용 기본 틀
+    const LOADING_PLACEHOLDER = {
+      date: "loading",
+      shortLabel: "동기화 중",
+      badgeText: "실시간 동기화 중...",
+      mainTitle: "구글 드라이브에서 최신 브리핑을 불러오고 있습니다...",
+      subTitle: "잠시만 기다려 주시면 가장 최신 날짜의 브리핑 화면으로 자동 전환됩니다.",
+      tabLabels: ["1부", "2부", "3부", "4부", "5부"],
+      execCards: [
+        { num: "01", color: "teal", jumpChapter: 0, title: "최신 브리핑 데이터 수신 중", bullets: ["구글 드라이브(briefing_archive_db.json)와 연결하고 있습니다.", "한 번 불러온 데이터는 스마트폰에 자동 캐싱되어 다음번엔 0.01초 만에 즉시 열립니다."] }
+      ],
+      chapters: [
+        { id: 0, shortBadge: "1부", badge: "LOADING", title: "데이터를 불러오는 중입니다...", summaryCardHtml: "<div class='p-4 text-xs text-slate-300'>잠시만 기다려 주세요...</div>", sentences: ["최신 브리핑 데이터를 불러오고 있습니다."] }
+      ]
+    };
 
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-amber-300">② [SLIDE 05] 쿠팡 3연속 적자 vs 고려아연 자사주 51.4% 소각·SKT/LGU+·현대백화점 호실적</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">어피티 머니레터</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">쿠팡 3분기 영업손실 6,423억 원</strong>: 인천 물류센터 화재와 원가 부담으로 3분기 연속 적자를 기록하며 올해 누적 영업적자가 <strong class="text-rose-400">1조 8,000억 원</strong>을 넘어섰습니다.</li>
-                    <li>• <strong class="text-white">고려아연 자사주 51.4% 소각 &amp; 액면분할</strong>: 보유 자사주의 <strong class="text-emerald-400">51.4%를 내년 1월 소각</strong>해 주주환원을 강화하고 액면분할도 재추진합니다.</li>
-                    <li>• <strong class="text-white">SKT·LGU+·현대백화점 호조 &amp; 스페이스X×퀄컴</strong>: SK텔레콤과 LG유플러스는 AI 데이터센터 매출 증가(각각 <strong class="text-emerald-400">+6.2%, +27.7%</strong>)와 비용 절감으로 3분기 영업이익이 크게 늘었고, 현대백화점은 명품·외국인 수요에 힘입어 영업이익 <strong class="text-emerald-400">946억 원(+30%)</strong>을 기록했습니다(1~9월 부산 방문 외국인 관광객도 <strong class="text-teal-300">393만 명으로 +47%</strong> 증가). 스페이스X는 퀄컴과 손잡고 미국 전역에 스타링크 모바일용 5G 기지국을 구축합니다.</li>
-                  </ul>
-                </div>
+    let briefingsByDate = [];
 
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-purple-300">③ 분양가 25% 선납 '지분적립형 공공주택', 중국 IPO 중단 지침 &amp; 자동차보험 합산비율</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold">어피티 머니레터</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">지분적립형 공공주택 공급</strong>: 정부가 <strong class="text-teal-300">분양가의 25%만 먼저 내고 입주</strong>한 뒤 나머지 지분은 4년마다 15%씩 나누어 취득(미취득 지분은 임대료 납부)하는 지분적립형 공공주택을 공급합니다.</li>
-                    <li>• <strong class="text-white">중국 IPO 잠정 중단 지침 &amp; 자동차보험 합산비율 상식</strong>: 중국 금융당국은 증시 급락 방어를 위해 투자은행에 IPO와 대규모 지분 매각 잠정 중단 비공식 지침을 내렸습니다. 한편 올해 상반기 국내 자동차보험은 손해율(84.9%)에 사업비율(17.0%)을 더한 <strong class="text-amber-300">합산비율이 101.9%</strong>로 손익분기점(100%)을 넘겼습니다.</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "3부는 세제와 금융, 주요 기업 실적, 그리고 부동산 정책 소식입니다.",
-              "정부가 내년 시행 예정이던 가상자산 소득 과세를 2029년으로 2년 더 미루기로 공식화했습니다. 특히 3년간 투자 손실을 이월해 수익에서 빼주는 손실 이월공제도 함께 추진하기로 했습니다.",
-              "금융위원회는 홍콩H지수 ELS를 불완전판매한 은행 7곳과 증권사 6곳에 과징금 3,712억 원을 부과했고, 삼성전자와 SK하이닉스의 4분기 거래대금 중 공매도 비중은 크게 낮아진 것으로 집계됐습니다.",
-              "기업 실적에서는 희비가 엇갈렸습니다. 쿠팡은 인천 물류센터 화재와 원가 부담으로 3분기에 6,423억 원의 영업손실을 내며 올해 누적 적자가 1조 8천억 원을 넘어선 반면, SK텔레콤과 LG유플러스는 AI 데이터센터 매출 성장에 힘입어 3분기 영업이익이 크게 늘었고 현대백화점도 외국인 관광객 증가로 영업이익이 30% 증가한 946억 원을 기록했습니다.",
-              "또한 고려아연은 주주환원 강화를 위해 내년 1월 보유 자사주의 51.4%를 소각하고 액면분할을 재추진하며, 스페이스X는 퀄컴과 손잡고 미국 전역에 스타링크 모바일용 5G 기지국을 구축해 자체 이동통신 사업에 나섭니다.",
-              "부동산에서는 분양가의 25%만 먼저 내고 입주한 뒤 나머지 지분을 4년마다 15%씩 나누어 사들이는 지분적립형 공공주택이 공급됩니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · SLIDE 06 & 07 · 보안 · 국방 · 정치 · 사회",
-            title: "4부. 금융사 37곳 해킹(47.3만 건 유출), 청해부대 호르무즈 인근 확대, 조작기소 특검 필리버스터 & 고병원성 AI",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-rose-400">🔐 [SLIDE 06 · 보안·국방] 금융사 37곳 해킹(47.3만 건 유출·10억 도난) &amp; 청해부대 작전구역 2배 확대</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-semibold">매경 디깅 · 뉴닉 데일리</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">금융사 37곳 해킹 피해 공식 확인</strong>: 지난 9월 30일부터 11월 3일까지 <strong class="text-rose-400">금융회사 37곳(40건 침해사고)</strong>에서 해킹으로 고객 이름·주민번호·계좌번호 등 <strong class="text-rose-400">47만 3,000건의 개인정보가 유출</strong>되고 회사가 관리하던 자금 <strong class="text-amber-300">약 10억 원이 도난</strong>당한 것으로 확인되었습니다(고객 직접 금전 피해는 미확인). 금융당국은 연말까지 약 580개 금융사를 전수 점검하고 AI 보안 체계를 도입합니다.</li>
-                    <li>• <strong class="text-white">청해부대 작전구역 오만 남방 외해(호르무즈 인근)까지 2배 확대</strong>: 국방부가 청해부대 활동 범위를 소말리아 아덴만에서 호르무즈 해협 인근 오만 남쪽 바다까지 <strong class="text-sky-300">약 2배(600해리→1,200해리)</strong> 넓히고, 파견 인원을 75명 늘려 <strong class="text-white">약 395명(해상초계기·폭발물처리반 포함)</strong>으로 확대하는 동의안을 국회에 제출합니다.</li>
-                  </ul>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-amber-300">🏛️ [SLIDE 07 · 정치·사회] 국회 '조작기소 특검법' 필리버스터 대치, 연천 고병원성 AI &amp; 종량제 실명제</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">뉴닉 데일리</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">'조작기소 특검법' 본회의 상정 &amp; 필리버스터</strong>: 더불어민주당 주도로 이재명 대통령 관련 사건의 조작 기소 여부를 수사하는 '조작기소 특검법'이 국회 본회의에 상정되자, 국민의힘이 상정된 모든 안건에 대해 <strong class="text-amber-300">필리버스터(무제한 토론)</strong>에 돌입하며 대치가 이어지고 있습니다.</li>
-                    <li>• <strong class="text-white">경기 연천 산란계 농장 올겨울 첫 고병원성 AI 발생</strong>: 계란 한 판 가격이 7,000원에 달하는 가운데 경기 연천군 산란계 농장에서 올겨울 첫 고병원성 조류인플루엔자(AI)가 발생해 한성숙 국무총리가 긴급 초동 방역을 지시했습니다.</li>
-                    <li>• <strong class="text-white">스토킹처벌법 5년 점검 &amp; 쓰레기 종량제 실명제 논쟁</strong>: 스토킹처벌법 시행 5년 실효성 대책과 함께, 종량제 봉투 실명제 시범 도입을 둘러싼 배출 책임 강화 vs 개인정보 노출 우려 논쟁이 주목받고 있습니다.</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "4부는 금융보안과 국방, 정치·사회 이슈입니다. 먼저 최근 한 달여 동안 금융회사 37곳에서 40건의 해킹 사고가 발생해 고객 개인정보 47만 3천 건이 유출되고 회사가 관리하던 자금 약 10억 원이 도난당한 사실이 공식 확인됐습니다.",
-              "다행히 고객 계좌에서 직접 돈이 빠져나간 사례는 없었지만, 금융당국은 연말까지 전국 580개 금융회사의 전산 보안 상태를 전수조사하고 AI 기반 보안 체계를 도입하기로 했습니다.",
-              "국방 분야에서는 정부가 상선을 보호하는 청해부대의 작전구역을 기존 소말리아 아덴만에서 호르무즈 해협 인근 오만 남쪽 바다까지 지금의 두 배로 넓히고, 파견 인원을 395명으로 늘려 해상초계기와 폭발물처리반까지 파견하기로 했습니다.",
-              "정치권에서는 더불어민주당 주도로 조작기소 특검법이 국회 본회의에 상정되자 국민의힘이 전체 안건에 대해 필리버스터, 무제한 토론에 돌입하며 강대강 대치가 이어지고 있습니다.",
-              "사회 분야에서는 계란 한 판 가격이 7천 원에 달하는 상황에서 경기도 연천군 산란계 농장에서 올겨울 첫 고병원성 조류인플루엔자가 발생해 정부가 긴급 방역에 나섰습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · SLIDE 07 & 08 · 라이프 · 날씨 · 오늘의 일정",
-            title: "5부. 고양시 아파트 산타 암호 공고, 수능일 증시 10시 개장, 주말 입동 영하권 한파 & 오늘 일정",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                    <div class="text-xs font-extrabold text-purple-300 mb-1.5">🎅 고양시 산타 암호 공고 &amp; 수능일(11/19) 증시 10시 개장</div>
-                    <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                      <li>• <strong class="text-white">어린이 동심 지키는 '산타 암호 공고문'</strong>: 경기 고양특례시의 한 아파트에서 아이들이 눈치채지 못하도록 한글·영어·한자·특수문자를 섞어 작성한 크리스마스 산타 봉사자 모집 공고문(<code>EYE드리에게 특별한 MEMORY를 선4할...</code>)이 따뜻한 화제를 모았습니다.</li>
-                      <li>• <strong class="text-white">수능일(11/19) 증시 1시간 늦게 개장</strong>: 오는 11월 19일 수능 당일 코스피·코스닥·코넥스 정규시장은 기존 오전 9시에서 <strong class="text-teal-300">오전 10시로 1시간 늦게 개장</strong>하며 프리마켓은 열리지 않습니다.</li>
-                    </ul>
-                  </div>
-
-                  <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                    <div class="text-xs font-extrabold text-sky-300 mb-1.5">❄️ 내일(11/7 토) 절기 '입동' 서울 영하 1도·체감 영하 5도 한파</div>
-                    <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                      <li>• <strong class="text-white">주말 올가을 첫 영하권 강추위</strong>: 오늘부터 찬 북서풍이 유입되며 절기상 입동(立冬)인 내일(7일 토요일) 서울 아침 기온이 <strong class="text-sky-300">영하 1도(체감온도 영하 5도)</strong>, 전국 아침 기온은 영하 4도~영상 5도로 떨어질 전망입니다. 주말 외출 시 두꺼운 외투를 꼭 챙기시기 바랍니다.</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="bg-teal-950/60 border border-teal-500/40 rounded-xl p-3.5">
-                  <div class="text-xs sm:text-sm font-extrabold text-teal-300 mb-1.5">📅 [SLIDE 08] 오늘(11월 6일 금) 주요 경제·실적 일정 및 영준님 당일 캘린더 리마인더</div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">미국 10월 고용보고서 &amp; 주요 기업 실적·공모주</strong>: 오늘 밤 시장의 시선이 집중된 <strong class="text-amber-300">미국 10월 고용보고서</strong>가 발표됩니다. 국내 증시에서는 <strong class="text-teal-300">LIG디펜스앤에어로스페이스·한화엔진·롯데케미칼·금호석유화학</strong>, 미국 증시에서는 <strong class="text-teal-300">오클로·모더나·비스트라</strong>가 실적을 발표하며, 광학 부품사 <strong class="text-white">옵토닉스(5~6일)</strong>와 로봇 센서 전문기업 <strong class="text-white">에이엘로봇(6·9일)</strong>의 코스닥 공모주 청약이 진행됩니다.</li>
-                    <li>• <strong class="text-amber-300">🔔 영준님 오늘(11월 6일 금요일) 당일 캘린더 일정</strong>: 오늘은 Google 캘린더에 등록된 <a href="https://www.google.com/calendar/event?eid=Y2xqMzhjYjU2b29tMmJiMjY0cmo0YjlrNmxoNmNiOXBjaGdqNmI5bmNoajNpY2I0Y3BnajZwaGtjNF8yMDI2MTEwNiBnb2R5anVuQG0&ctz=Asia/Seoul" target="_blank" class="text-amber-300 underline font-bold">네이버 멤버쉽 갱신일</a>입니다!</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "마지막 5부, 생활 속 화제와 주말 날씨, 그리고 오늘 영준님이 챙기실 일정입니다.",
-              "경기도 고양시의 한 아파트에서 아이들의 동심을 지켜주기 위해 산타 자원봉사자 모집 공고를 한글과 영어, 한자를 섞은 암호문처럼 적어 붙여 온라인에서 따뜻한 미소를 자아냈고, 오는 11월 19일 수능 당일에는 국내 주식시장이 평소보다 1시간 늦은 오전 10시에 개장합니다.",
-              "날씨 소식입니다. 오늘부터 찬 북서풍이 불어오면서 절기상 입동인 내일 토요일 아침에는 서울 기온이 영하 1도, 체감온도는 영하 5도 안팎까지 뚝 떨어지는 올가을 첫 영하권 추위가 찾아오니 퇴근길과 주말 외출 시 따뜻한 외투 꼭 챙기시기 바랍니다.",
-              "오늘 밤에는 연준의 금리 향방을 가늠할 미국 10월 고용보고서가 발표되며, 국내에서는 한화엔진과 롯데케미칼이, 미국에서는 원전주 오클로와 비스트라, 모더나가 실적을 발표합니다. 미국 중간선거 공식 결과는 미국 정부 선거 안내 포털에서 확인하실 수 있습니다.",
-              "그리고 영준님, 오늘 11월 6일 금요일은 캘린더에 등록된 네이버 멤버십 정기 갱신일입니다! 오늘도 따뜻하고 기분 좋은 금요일 보내시고 행복한 주말 맞이하세요. 감사합니다!"
-            ]
-          }
-        ]
-      },
-      // -----------------------------------------------------------------------
-      // 0. 2026-11-05 (목) [보관본]
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-11-05",
-        shortLabel: "11/05 (목)",
-        badgeText: "2026.11.05 (목) 보관본",
-        mainTitle: "2026년 11월 5일 (목) 평일 종합 시사·경제 브리핑",
-        subTitle: "뉴욕 다우 +3.03% 폭등·WTI 유가 -8.26% 급락, 저PBR 151곳 옥석 가리기 & SK하이닉스 다롄 변수, 연 4% 예금 '화폐착각(실질 1.07%)'과 GPU 담보금융(ABF), 필수의료 대책·순천대/경국대 의대 신설 외",
-        tabLabels: ["1부. 증시·유가급락", "2부. 저PBR·반도체", "3부. 화폐착각·ABF", "4부. 필수의료·사법", "5부. 유럽해킹·일정"],
-        execCards: [
-          {
-            num: "01",
-            color: "emerald",
-            jumpChapter: 0,
-            title: "뉴욕 다우 +3.03% 폭등·국제유가 8% 급락 vs 반도체 숨고르기",
-            bullets: [
-              "국내 증시는 장중 400p 넘게 출렁인 끝에 <strong class='text-emerald-400'>코스피 5,683.80(+0.62%)</strong>, <strong class='text-emerald-400'>코스닥 714.95(+1.50%)</strong> 반등 마감. 한화솔루션(+18.64%)·삼성SDI(+11.57%)·LG엔솔(+5.03%) 등 친환경·이차전지 급등.",
-              "간밤 뉴욕 증시는 중동 긴장 완화에 따른 <strong class='text-sky-300'>국제유가 폭락(WTI $88.15, -8.26%)</strong>과 국채금리 하락에 힘입어 <strong class='text-emerald-400'>다우존스 +3.03%(53,356.12, 19개월 최대 상승)·S&amp;P500 +1.58%·나스닥 +1.44%</strong> 급등. 단, AI 데이터센터 감독 우려로 <strong class='text-rose-400'>필라델피아 반도체지수는 -3.13%</strong> 조정."
-            ]
-          },
-          {
-            num: "02",
-            color: "sky",
-            jumpChapter: 1,
-            title: "저PBR 151곳 옥석 가리기 & SK하이닉스 다롄 변수·AMD 호실적",
-            bullets: [
-              "한국거래소가 선정한 <strong class='text-amber-300'>저PBR 상장사 151곳</strong>이 증권사 화면에 표시된 첫날 <strong class='text-emerald-400'>115곳(76.2%) 상승</strong>. 단순 꼬리표가 아닌 꾸준한 본업 이익·현금 보유 기업의 실질적 주주환원 실행 여부가 핵심.",
-              "미 상무부가 <strong class='text-rose-400'>SK하이닉스 중국 다롄 공장 장비 반입 승인을 보류</strong>하며 솔리다임 뉴욕 공장 투자 불확실성 부각. 반면 <strong class='text-emerald-400'>AMD는 3분기 데이터센터 매출 +97% 급증</strong>(내년 +80% 전망), 패브리넷(+51%)·LG엔솔(영업익 7,560억, +26%) 호실적 달성."
-            ]
-          },
-          {
-            num: "03",
-            color: "amber",
-            jumpChapter: 2,
-            title: "연 4% 예금의 '화폐착각(실질 1.07%)' 경계와 GPU 담보금융(ABF)",
-            bullets: [
-              "세전 연 4% 예금도 물가상승률(2.9%)을 차감하면 <strong class='text-amber-300'>실질수익률은 약 1.07%</strong>에 불과. 명목 숫자만 보는 <strong class='text-rose-400'>'화폐착각(Money Illusion)'</strong>에 빠져 예금·채권만 편식할 경우 10년 수익률이 약 10%p 뒤처진다는 연구 결과 제시.",
-              "고성능 GPU 자산 가치와 임대 사용료 현금흐름을 담보로 대출받는 <strong class='text-teal-300'>자산담보금융(ABF)</strong> 부상. 금융권 20곳 해킹에 금감원 IT보안 조직 신설, 4대 은행 퇴직자 재채용이 신입의 80%(1,013명) 차지, 11/12부터 다세대·다가구 건축규제 완화(1,000㎡·4층)."
-            ]
-          },
-          {
-            num: "04",
-            color: "rose",
-            jumpChapter: 3,
-            title: "필수의료 대책·순천대/경국대 의대 신설, 코너스톤 IPO & 유럽 해킹",
-            bullets: [
-              "아주대 소아응급실 압수수색 파장(전문의 9명 중 8명 사직 의사)에 정부가 <strong class='text-teal-300'>응급실 수사 가이드라인·배상보험 국가 지원·비수도권 계약형 지역필수의사제</strong> 발표 및 <strong class='text-emerald-400'>전남 순천대(60명)·경북 경국대(40명) 의대 신설 확정</strong>.",
-              "윤석열 전 대통령 대선 허위사실 공표 선거법 2심 징역 1년 6개월·집유 3년 선고(확정 시 국힘 397억 반환 의무), 기관 단타 막는 <strong class='text-sky-300'>IPO 코너스톤 제도 11/13 시행</strong>, 유럽 11개국 슈퍼마켓 냉장 해킹 및 인천시 반사 소재 '빛나는 일바지' 사고 0건."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · 마켓 & 매크로 대시보드 (11/05)",
-            title: "1부. 뉴욕 다우 +3.03% 폭등·국제유가 8% 급락 및 국내외 거시경제 지표",
-            summaryCardHtml: `
-              <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                11월 4일 국내 증시는 장중 400p 이상의 변동성을 이겨내고 <strong class="text-emerald-400">코스피 5,683.80(+0.62%)</strong>, <strong class="text-emerald-400">코스닥 714.95(+1.50%)</strong>로 상승 마감했습니다. 간밤 뉴욕 증시는 중동 확전 우려 완화에 따른 <strong class="text-sky-300">국제 유가 8%대 급락(WTI $88.15, -8.26%)</strong>과 국채금리 하락에 힘입어 <strong class="text-emerald-400">다우존스(+3.03%, 53,356.12)</strong>, <strong class="text-emerald-400">S&amp;P500(+1.58%, 7,688.64)</strong>, <strong class="text-emerald-400">나스닥(+1.44%, 25,736.51)</strong>이 일제히 급등했습니다(필라델피아 반도체지수는 -3.13% 조정).
-              </div>
-            `,
-            sentences: [
-              "11월 5일 목요일 모닝 라디오 시사·경제 브리핑입니다. 먼저 1부, 국내외 금융시장과 거시경제 지표입니다.",
-              "국내 증시는 코스피가 0.62% 오른 5,683.80, 코스닥은 1.50% 오른 714.95로 반등했고, 뉴욕 증시에서는 국제 유가가 8% 넘게 급락한 데 힘입어 다우지수가 3.03% 폭등한 53,356.12로 마감했습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · 증권 · 반도체 · 글로벌 기업 (11/05)",
-            title: "2부. 저PBR 151곳 주가 반등 옥석 가리기, SK하이닉스 다롄 변수 & AMD 호실적",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                한국거래소가 선정한 저PBR 151곳이 증권사 화면에 표시된 첫날 115곳(76.2%)이 상승했으나 본업 수익성과 현금 보유 기반의 옥석 가리기가 필요합니다. 미 상무부의 SK하이닉스 다롄 공장 장비 반입 승인 보류로 솔리다임 뉴욕 투자 불확실성이 제기된 반면, AMD(3Q 데이터센터 매출 +97%)·패브리넷(+51%)·LG에너지솔루션(영업익 7,560억, +26%)은 호실적을 달성했습니다.
-              </div>
-            `,
-            sentences: [
-              "2부입니다. 한국거래소가 저PBR 기업 151곳을 증권사 화면에 표시하자 첫날 76%가 상승했지만 본업 이익과 현금 여력을 확인하는 옥석 가리기가 중요하며, 글로벌 기업 중에서는 AMD가 3분기 데이터센터 매출이 97% 급증하는 호실적을 발표했습니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · 연금 · 자산배분 · 금융 · 부동산 (11/05)",
-            title: "3부. 연 4% 예금의 '화폐착각(실질 1.07%)' 경계, GPU 담보금융(ABF) & 건축규제 완화",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                세전 연 4% 예금도 물가상승률(2.9%) 반영 시 실질수익률은 약 1.07%에 불과하며, 명목 숫자에 속는 '화폐착각(Money Illusion)'으로 안전자산만 편식하면 10년 수익률이 약 10%p 뒤처진다는 연구 결과가 제시되었습니다. 고성능 GPU와 임대 현금흐름을 담보로 자금을 조달하는 자산담보금융(ABF)이 부상했으며, 11월 12일부터 다세대·다가구 연면적 상한 확대(1,000㎡) 및 4층 완화가 시행됩니다.
-              </div>
-            `,
-            sentences: [
-              "3부입니다. 세전 연 4% 예금도 물가상승률 2.9%를 빼면 실질수익률은 1.07%에 불과하므로 화폐착각에 빠져 장기 주식형 목표 비중을 흔들지 말아야 하며, 고성능 GPU와 임대 사용료를 담보로 돈을 빌리는 자산담보금융 ABF가 주목받고 있습니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · 의료 · 사회 · 정치 · 사법 (11/05)",
-            title: "4부. 아주대 소아응급실 파장과 필수의료 대책, 순천대·경국대 의대 신설 & 코너스톤 제도",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                아주대 소아응급실 압수수색 파장에 정부가 응급실 수사 가이드라인·배상보험 국가 지원·비수도권 계약형 지역필수의사제를 발표하고 전남 순천대(60명)·경북 경국대(40명) 의대 신설을 확정했습니다. 윤석열 전 대통령 대선 허위사실 공표 선거법 2심에서는 징역 1년 6개월·집행유예 3년이 선고됐고, 기관 공모주 단타를 막는 코너스톤 투자자 제도가 11월 13일 시행됩니다.
-              </div>
-            `,
-            sentences: [
-              "4부입니다. 정부가 필수의료 공백 해소를 위해 배상보험 국가 지원과 계약형 지역필수의사제를 추진하고 전남 순천대와 경북 경국대 의대 신설을 확정했으며, 기관 공모주 단타를 막는 코너스톤 투자자 제도가 11월 13일 시행됩니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · 글로벌 보안 · 생활경제 (11/05)",
-            title: "5부. 유럽 11개국 냉장고 해킹, 인천 '빛나는 일바지' 사고 0건 & 일본 면세 사후환급",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                유럽 11개국 슈퍼마켓 냉장 시스템이 동시다발 해킹을 당해 온도가 50℃까지 치솟아 EU가 공동 대응에 나섰으며, 인천시는 농촌 어르신 야간 안전을 위해 반사 소재 '빛나는 일바지'를 배포해 야간 보행사고 0건을 달성했습니다. 11월부터 일본 면세는 출국 공항 '사후 환급' 방식으로 개편되었습니다.
-              </div>
-            `,
-            sentences: [
-              "5부입니다. 유럽 11개국 슈퍼마켓 냉장 시스템 해킹 소식과 인천시의 빛나는 일바지 야간 보행사고 0건 달성, 그리고 일본 면세 사후 환급 개편 소식까지 전해드렸습니다. 이상으로 11월 5일 브리핑을 마칩니다."
-            ]
-          }
-        ]
-      },
-
-      // -----------------------------------------------------------------------
-      // 1. 2026-11-04 (수)
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-11-04",
-        shortLabel: "11/04 (수)",
-        badgeText: "2026.11.04 (수) 최신판",
-        mainTitle: "2026년 11월 4일 (수) 평일 종합 시사·경제 브리핑",
-        subTitle: "앤트로픽 투기등급 경고 & 현대차 4대 과제, 롯데 센텀시티 매각, 162조 미래대응기금, 전용기 여권 유출 외",
-        tabLabels: ["1부. 증시·매크로", "2부. 앤트로픽·AI", "3부. 현대차·롯데", "4부. 162조기금·보안", "5부. 테크·오늘일정"],
-        execCards: [
-          {
-            num: "01",
-            color: "sky",
-            jumpChapter: 0,
-            title: "증시 차별화 및 대기성 부동자금 급증",
-            bullets: [
-              "국내 증시는 AI 설비투자 수익성 회수 우려 및 대외 경계심리로 <strong class='text-rose-400'>코스피 5,648.79(-3.59%)</strong>, <strong class='text-rose-400'>코스닥 704.39(-4.08%)</strong> 급락 마감. 단기 안전자산 선호로 국내 MMF 잔고는 사상 최대인 <strong class='text-sky-300'>270조 원(한 달 새 +38조 원)</strong> 육박.",
-              "반면 간밤 뉴욕 증시는 반도체 반등세로 <strong class='text-emerald-400'>나스닥(+0.83%) · S&amp;P500(+0.36%)</strong> 상승 마감. 장 마감 후 AMD·아리스타네트웍스·슈퍼마이크로(SMCI) 등이 호실적을 발표하며 시간외 급등 시현."
-            ]
-          },
-          {
-            num: "02",
-            color: "rose",
-            jumpChapter: 1,
-            title: "AI 버블 회수 우려와 주력 수출 산업 경고음",
-            bullets: [
-              "11월 중순 나스닥 상장을 추진 중인 앤트로픽은 1~9월 매출 <strong class='text-emerald-400'>1,200% 폭증</strong>에도 불구, <strong class='text-white'>향후 1,200조 원(8,954억 달러)</strong>에 달하는 장기 인프라 약정 부담으로 인해 <strong class='text-rose-400'>'투기등급(BB)' 경고</strong> 직면. 기관들은 기업가치를 25% 하향 압박 중.",
-              "한국 1~10월 자동차 누적 수출액이 <strong class='text-amber-300'>586억 달러</strong>로 전년 대비 감소하며 <strong class='text-amber-300'>6년 만에 첫 역성장</strong> 진입. 현대차는 연간 판매·수익성·투자 가이던스를 전면 하향하고 노사 갈등·환율 하락·AI 상용화 지연의 4대 과제 직면."
-            ]
-          },
-          {
-            num: "03",
-            color: "emerald",
-            jumpChapter: 2,
-            title: "실리적 유통 협력과 자산시장 세대교체",
-            bullets: [
-              "팔란티어(PLTR)는 3분기 매출 <strong class='text-emerald-400'>23.13억 달러(+96%)</strong>로 사상 최초 미 민간 매출이 정부 부문을 추월. 포스코홀딩스는 영업이익 <strong class='text-emerald-400'>9,450억 원(+48%)</strong>으로 실적 반등 성공.",
-              "롯데쇼핑은 센텀시티점을 라이벌 신세계에 전격 매각하여 잠실점 리뉴얼 등 핵심 거점에 집중하는 실리적 협력 단행. 서울 임의경매 시장에서는 <strong class='text-sky-300'>2030세대 낙찰 비중이 41%</strong>로 역사상 처음으로 4050세대를 추월."
-            ]
-          },
-          {
-            num: "04",
-            color: "amber",
-            jumpChapter: 3,
-            title: "대형 재정 기금 충돌 및 국가 사이버·사법 리스크",
-            bullets: [
-              "정부의 <strong class='text-sky-300'>162조 3,000억 원</strong> 규모 '미래대응기금' 신설을 두고 국회에서 미래 투자 대 국가채무 우선 상환 공방 격화.",
-              "대통령 전용기(공군 1호기) 탑승자 <strong class='text-rose-400'>168명의 개인정보 유출</strong>(5개월간 다크웹 노출)로 여권 전원 재발급 및 공공기관 2,100곳 보안 점검 착수. 현직 판사의 <strong class='text-amber-300'>67.5%</strong>가 법정 서면에서 'AI 허위 판례' 제출을 경험했다고 응답."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · SLIDE 02 · 마켓 & 매크로 대시보드",
-            title: "1부. 국내외 금융시장 및 핵심 거시경제(Macro) 지표",
-            summaryCardHtml: `
-              <div class="space-y-3.5">
-                <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                  전일(11월 3일) 국내 증시는 AI 투자 수익성에 대한 경계심리와 대외 정치 이벤트를 앞둔 관망세로 <strong class="text-rose-400">코스피가 5,648.79(-3.59%, ▼210.29)</strong>, <strong class="text-rose-400">코스닥이 704.39(-4.08%, ▼29.97)</strong>로 하락 마감했습니다(어피티 머니레터). 반면 간밤 뉴욕 증시는 애플이 메모리 가격 급등에 따른 마진 둔화 우려로 약세를 보이며 <strong class="text-slate-300">다우지수(-0.38%, 51,786.72)</strong>를 끌어내렸으나, 엔비디아 등 반도체·빅테크에 저가 매수세가 유입되며 <strong class="text-emerald-400">나스닥(+0.83%, 25,372.01 / 나스닥100 +0.68%)</strong>과 <strong class="text-emerald-400">S&amp;P 500(+0.36%, 7,568.92)</strong>이 반등했고 장 마감 후 실적을 발표한 <strong class="text-teal-300">AMD·아리스타네트웍스·슈퍼마이크로(SMCI)</strong>도 호실적으로 시간외 급등했습니다.
-                </div>
-                <div class="overflow-x-auto rounded-xl border border-slate-700/90 bg-slate-900/90">
-                  <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr class="bg-slate-800/95 text-slate-300 border-b border-slate-700">
-                        <th class="py-2.5 px-3 font-bold whitespace-nowrap">지표명</th>
-                        <th class="py-2.5 px-3 font-bold whitespace-nowrap">현재 수치 (종가)</th>
-                        <th class="py-2.5 px-3 font-bold whitespace-nowrap">전일 대비 등락</th>
-                        <th class="py-2.5 px-3 font-bold">핵심 배경 및 시장 시사점</th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-800 text-slate-200">
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">코스피 (KOSPI)</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">5,648.79</td>
-                        <td class="py-2.5 px-3 font-bold text-rose-400 whitespace-nowrap">▼210.29 (-3.59%)</td>
-                        <td class="py-2.5 px-3 text-slate-300">AI 투자 수익성 우려 및 대외 경계심리로 조정, 부동자금 MMF 사상 최대 270조 원 육박(한 달 새 +38조 원)</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">코스닥 (KOSDAQ)</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">704.39</td>
-                        <td class="py-2.5 px-3 font-bold text-rose-400 whitespace-nowrap">▼29.97 (-4.08%)</td>
-                        <td class="py-2.5 px-3 text-slate-300">위험자산 회피 심리 반영, 오늘 항암 신약 개발사 '넥스아이' 등 코스닥 공모주 청약 진행</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">미 3대 지수 (11/3)</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">S&amp;P 7,568.92<br><span class="text-[11px] text-slate-400">나스닥 25,372.01</span></td>
-                        <td class="py-2.5 px-3 font-bold text-emerald-400 whitespace-nowrap">+0.36% / +0.83%<br><span class="text-[11px] text-rose-400">다우 -0.38%</span></td>
-                        <td class="py-2.5 px-3 text-slate-300">다우 51,786.72(-0.38%), 나스닥100 +0.68%, 장 마감 후 AMD·아리스타·SMCI 호실적 시간외 급등</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">원·달러 환율</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">1,341.00원</td>
-                        <td class="py-2.5 px-3 font-bold text-teal-300 whitespace-nowrap">▼2.80원 (-0.21%)</td>
-                        <td class="py-2.5 px-3 text-slate-300">미·이란 평화협상 기대에 따른 유가 안정(브렌트유 $104.77, -7%↓) 속 하향 안정 숨고르기</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">한국 10월 소비자물가</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">전년비 +2.8%</td>
-                        <td class="py-2.5 px-3 font-bold text-amber-300 whitespace-nowrap">전월비 +0.2%</td>
-                        <td class="py-2.5 px-3 text-slate-300">생활물가지수 전년비 +2.6% 상승, 농축수산물 하락했으나 공업제품·서비스 상승세 지속</td>
-                      </tr>
-                      <tr class="hover:bg-slate-800/40">
-                        <td class="py-2.5 px-3 font-bold text-white whitespace-nowrap">미 ISM 제조업 / 중국</td>
-                        <td class="py-2.5 px-3 font-bold whitespace-nowrap">PMI 55.5</td>
-                        <td class="py-2.5 px-3 font-bold text-sky-300 whitespace-nowrap">10개월 연속 확장</td>
-                        <td class="py-2.5 px-3 text-slate-300">미 제조업·구인건수 호조로 국채금리 상승 압력, 중국 인민은행은 자사주 매입 지원 도구 상설화</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "좋은 아침입니다, 영준님! 11월 4일 수요일, 이어폰으로 편하게 듣는 모닝 라디오 시사·경제 브리핑을 시작합니다.",
-              "먼저 첫 번째 코너, 국내외 금융시장과 거시경제 흐름부터 짚어볼까요?",
-              "어제 우리 증시는 미국 빅테크의 인공지능 투자 수익성 우려와 대외 정치 이벤트를 앞둔 경계심리가 겹치면서 코스피가 3.59% 내린 5,648.79로 숨을 골랐습니다.",
-              "이렇게 시장 변동성이 커지다 보니, 갈 곳을 잃은 단기 대기자금인 머니마켓펀드, 즉 MMF 잔고가 한 달 사이에만 38조 원이나 불어나며 사상 최대인 270조 원에 육박했습니다.",
-              "하지만 간밤 뉴욕 증시에서 반가운 반전의 신호가 나왔습니다. 엔비디아를 비롯한 반도체와 빅테크 종목에 저가 매수세가 유입되면서 나스닥이 0.83%, S&P500이 0.36% 반등에 성공했는데요.",
-              "특히 정규장 마감 직후 실적을 발표한 AMD와 아리스타네트웍스, 슈퍼마이크로가 강력한 AI 서버 수요를 증명하며 시간외 거래에서 일제히 급등해 오늘 우리 반도체 투심에도 긍정적인 온기를 불어넣을 전망입니다.",
-              "한편 원·달러 환율은 미·이란 평화협상 기대감에 따른 유가 하락 속에 1,341원으로 소폭 내려왔고, 우리나라 10월 소비자물가는 전년 대비 2.8% 상승하며 2%대 후반 흐름을 이어갔습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · SLIDE 03 & 04 · AI · 자동차 · 주력산업 심층",
-            title: "2부. 앤트로픽 '투기등급(BB)' 경고, 현대차 4대 고민 & 포스코·LG엔솔·한진칼",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-amber-300">① [SLIDE 03] 나스닥 상장 앞둔 앤트로픽, 기업가치 하향 압박과 '투기등급(BB)' 경고</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">어피티 머니레터 · 매경 디깅</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">앤트로픽 상장 및 약정 부채 리스크</strong>: 11월 중순 나스닥 상장을 준비 중인 앤트로픽은 올해 1~9월 매출이 전년 대비 <strong class="text-teal-300">1,200% 폭증한 332억 4,200만 달러</strong>를 기록했으나, 향후 수년간 지급해야 할 AI 컴퓨팅·데이터센터 구매·임대 약정액이 <strong class="text-rose-400">8,954억 달러(약 1,200조 원, 2030년 말까지 4,475억 달러 집행)</strong>에 달해 투자적격(BBB- 이상)에 못 미치는 <strong class="text-rose-400">투기등급('BB')</strong>을 받을 수 있다는 전망이 나왔습니다.</li>
-                    <li>• <strong class="text-white">기관 몸값 인하 요구 &amp; 빅테크 CDS 급증</strong>: IPO 참여 기관투자자들은 목표 기업가치(2조 달러·약 2,700조 원)보다 20~25% 낮은 <strong class="text-amber-300">1조 5,000억~1조 6,000억 달러</strong>로 몸값을 낮출 것을 요구 중이며, 대규모 회사채를 발행 중인 빅테크들의 부도 위험 지표인 <strong class="text-white">신용부도스와프(CDS) 프리미엄</strong>도 급증하고 있습니다.</li>
-                    <li>• <strong class="text-white">팔란티어(PLTR) &amp; 마벨(MRVL)</strong>: 팔란티어는 3분기 매출 <strong class="text-emerald-400">23억 1,300만 달러(+96%, 약 3.1조 원)</strong>를 달성하며 사상 처음 미국 민간 매출이 정부 매출을 넘어섰고, 마벨은 광학 부품사 루멘텀을 <strong class="text-teal-300">1,150억 달러(약 154조 원)</strong>에 인수합니다.</li>
-                  </ul>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-sky-300">② [SLIDE 04] 6년 만에 감소한 한국 자동차 수출과 현대차의 4대 과제</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 font-semibold">매경 디깅 심층분석</span>
-                  </div>
-                  <p class="text-xs text-slate-300 leading-relaxed mb-2">
-                    한국 수출 2위 품목인 자동차의 올해 1~10월 수출액이 <strong class="text-white">586억 달러</strong>로 전년 동기(596억 달러) 대비 줄어들며 6년 만에 처음 감소했습니다. 현대차의 1~3분기 누적 영업이익도 2023년 11조 6,500억 원에서 올해 <strong class="text-rose-400">8조 원으로 둔화(주가 6월 고점 대비 -60%)</strong>했습니다. 3분기 영업이익(<strong class="text-emerald-400">2조 6,770억 원, +5.5%</strong>) 선방에도 시장은 다음 4대 리스크를 꼽고 있습니다:
-                  </p>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-200">
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-amber-300">① 가이던스 일제 하향</strong>: 연간 판매 목표(416만→400만 대), 영업이익률(6.3~7.3%→5.5~6.5%), 투자액(17.8조→16조 원) 하향 조정
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-rose-300">② 연이은 생산 차질</strong>: 부품사 안전공업 화재, 8월 전면 파업(매출 차질 2.3조 원), 울산 5공장 노사 갈등에 따른 공급 병목
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-teal-300">③ 1,340원대 원화 강세 전환 부담</strong>: 고환율 수혜가 축소되며 수출 채산성 및 환차익 효과 둔화 우려
-                    </div>
-                    <div class="bg-slate-950/80 border border-slate-800 rounded-lg p-2.5">
-                      <strong class="text-purple-300">④ 미래차·로봇 속도 지연</strong>: 보스턴 다이내믹스('아틀라스') 상장 미검토 확인 및 자체 자율주행 '아트리아 AI'(2029년 하반기 적용) 속도 지연
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-emerald-300">③ 포스코홀딩스·LG엔솔 실적 호조 및 한진칼 경영권 지분 경쟁</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">어피티 머니레터</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">포스코홀딩스 &amp; LG에너지솔루션</strong>: 포스코홀딩스는 철강·인프라 회복으로 3분기 영업이익이 전년 대비 48% 늘어난 <strong class="text-emerald-400">9,450억 원</strong>을 기록하며 이차전지소재 부진을 만회했고, LG에너지솔루션은 3분기 매출 <strong class="text-emerald-400">9조 6,434억 원(+59.0%)</strong>·영업이익 <strong class="text-emerald-400">7,560억 원(+25.7%)</strong>을 달성했습니다.</li>
-                    <li>• <strong class="text-white">한진칼 경영권 지분 경쟁 가열</strong>: 한진칼 최대주주 자리를 두고 <strong class="text-amber-300">호반그룹</strong>이 지분 추가 매입 및 기업결합 신고에 나서자, <strong class="text-sky-300">조원태 회장</strong>도 370억 원 규모의 추가 지분 매입 계약을 체결하며 지분 경쟁이 다시 달아오르고 있습니다.</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "이어서 두 번째 코너, 오늘 어피티와 매경 디깅이 나란히 주목한 AI 대장주 앤트로픽의 상장 이슈입니다.",
-              "클로드 개발사 앤트로픽이 이달 중순 최대 2,700조 원이라는 사상 최대 몸값을 목표로 나스닥 상장을 준비 중인데요, 올해 9월까지 매출이 작년보다 무려 12배나 폭증한 332억 달러에 달할 만큼 성장세는 압도적입니다.",
-              "그런데 왜 신용평가 시장에서는 앤트로픽이 투자적격 등급을 받지 못하고 투기등급인 BB 등급을 받을 수 있다는 경고가 나왔을까요?",
-              "핵심은 바로 천문학적인 데이터센터 약정 비용입니다. 앤트로픽이 앞으로 수년간 지급하기로 약속한 컴퓨팅·데이터센터 구매 계약 금액이 무려 8,954억 달러, 우리 돈 약 1,200조 원에 달하기 때문인데요.",
-              "이 때문에 상장에 참여할 기관투자자들도 기업가치를 목표치보다 20에서 25% 낮춘 1조 5천억 달러 수준으로 조정하라고 압박하고 있습니다. 이제 시장은 AI 기술력뿐만 아니라 부채와 현금흐름을 감당할 수 있는지를 가장 냉정하게 따지고 있는 겁니다.",
-              "반면 같은 날 실적을 발표한 팔란티어는 3분기 매출이 96% 급증한 3조 1천억 원을 기록하며, 창사 이래 처음으로 미국 민간 기업 매출이 정부 매출을 넘어서는 의미 있는 이정표를 세웠습니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · SLIDE 05 · 유통 · K-푸드 · 브랜딩 · 부동산",
-            title: "3부. 롯데 센텀시티점 신세계 매각, K-푸드 인바운드 공식, 브랜딩 & 2030 경매",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-teal-300">① [SLIDE 05] 롯데가 부산 센텀시티점을 라이벌 신세계에 매각한 진짜 이유</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-semibold">트렌드라이트 26-044호</span>
-                  </div>
-                  <p class="text-xs text-slate-200 leading-relaxed">
-                    과거 인천터미널점 분쟁 등 오랜 앙숙이던 <strong class="text-white">롯데와 신세계</strong>가 사상 처음으로 점포 양수도 계약을 맺었습니다. 신세계 센텀시티점이 이를 통해 '신세계 타운'으로 덩치를 키우게 되지만, 쿠팡 등 이커머스와의 업태 초월 경쟁 속에서 롯데는 경쟁사 견제 비용을 감수하기보다 매각 현금을 확보해 <strong class="text-teal-300">잠실점 리뉴얼 등 핵심 점포에 집중하는 실리</strong>를 택했습니다(롯데 내 스타벅스 입점, 무신사 도쿄 팝업 내 쿠팡 로켓나우 부스 등 '경쟁 속 협력' 확산).
-                  </p>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-amber-300">② 안방에 발목 잡힌 K-푸드의 '인바운드(방한 외국인) → 수출' 공식</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">어피티 머니레터</span>
-                  </div>
-                  <p class="text-xs text-slate-200 leading-relaxed">
-                    수입 원재료(<strong class="text-rose-400">밀·대두 +22%, 알루미늄 +24%</strong>) 가격 상승, 정부의 물가 안정 압박, 인구 감소(<strong class="text-white">1인당 흰 우유 소비량 22.9kg으로 1980년대 이후 최저</strong>)로 내수 한계에 직면한 식품업계가 상반기 <strong class="text-amber-300">방한 관광객 1,000만 명(카드 소비 10조 원 중 식음료 15%)</strong> 공략에 나섰습니다. 대표적으로 오리온은 <strong class="text-emerald-400">'비쵸비 코리아·국립중앙박물관 에디션'</strong>으로 매출이 50% 이상 늘며 글로벌 코스트코 입점에 성공했습니다.
-                  </p>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                    <span class="text-xs sm:text-sm font-extrabold text-purple-300">③ 진정성 브랜딩, LG전자 '에이아이돌' &amp; 서울 경매 2030 세대 41%</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold">트렌드라이트 · 고슴이의 비트</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">진정성 브랜딩 3선</strong>: 제주 로컬 브랜드 <strong class="text-teal-300">태리타운</strong>의 꾸준한 사회 후원, <strong class="text-teal-300">29CM</strong>의 국립한글박물관 협업 전시·서체 디테일, <strong class="text-teal-300">샤넬</strong>의 문화잡지 '아트&amp;컬처' 독립서점 32곳 한정 무료 배포가 강력한 브랜드 팬덤을 구축한 사례로 꼽혔습니다.</li>
-                    <li>• <strong class="text-white">LG전자 '에이아이돌(I WASH)'</strong>: 세탁건조기 'AI 워시콤보'를 신인 아이돌 데뷔처럼 기획한 마케팅으로 <strong class="text-emerald-400">온라인 언급량 +72%·매출 +30% 성장</strong>을 거두었습니다.</li>
-                    <li>• <strong class="text-white">서울 경매 2030 세대 역전</strong>: 올해 1~9월 서울 집합건물 임의경매 매수자 중 <strong class="text-amber-300">2030 세대가 약 41%</strong>를 차지해 사상 처음 4050 세대를 앞질렀습니다.</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "세 번째 코너는 우리 주력 산업과 유통, 부동산 소식입니다. 먼저 반도체와 함께 수출 양대 기둥이던 자동차 수출이 올해 1월부터 10월까지 586억 달러에 그치며 6년 만에 처음 감소세로 돌아섰습니다.",
-              "현대차 역시 3분기 영업이익은 2조 6,770억 원으로 선방했지만, 고금리에 따른 수요 둔화로 올해 판매 목표를 400만 대로 낮추고 영업이익률과 투자 계획도 일제히 하향 조정했는데요.",
-              "여기에 부품사 화재와 파업 등 생산 차질, 1,340원대로 내려온 환율 부담, 그리고 로봇 자회사 보스턴 다이내믹스의 상장 계획이 없다는 발표까지 겹치며 미래 성장 동력 속도를 높여야 하는 과제를 안게 됐습니다.",
-              "반면 포스코홀딩스는 철강과 인프라 본업 회복으로 3분기 영업이익이 48% 늘어난 9,450억 원을 기록했고, LG에너지솔루션도 영업이익이 25.7% 증가한 7,560억 원을 달성하며 든든하게 버텨주었습니다.",
-              "유통가에서는 오랜 앙숙이던 롯데가 부산 센텀시티점을 바로 옆 라이벌 신세계에 매각하는 파격적인 결단을 내렸는데요, 쿠팡 같은 이커머스와 경쟁하는 시대에 라이벌 견제 비용을 쓰기보다 현금을 확보해 잠실점 같은 핵심 점포에 집중하겠다는 실리 전략으로 풀이됩니다.",
-              "부동산 시장에서는 올해 서울 아파트와 오피스텔 등 집합건물 경매 낙찰자 가운데 2030 세대 비중이 41%를 차지하며 사상 처음으로 4050 세대를 앞질렀다는 소식이 눈길을 끌었습니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · SLIDE 06 & 07 · 정치 · 국가재정 · 외교 · 보안",
-            title: "4부. 나랏돈 162조 '미래대응기금' 여야 격돌 & 전용기 여권 유출·국정원 점검·북한 담화",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-amber-300">🏛️ [SLIDE 06 · 정치·국가재정] 나랏돈 162조 원 '미래대응기금' 신설 둘러싼 여야 격돌</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold">뉴닉 데일리</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">미래대응기금(162.3조 원) 개요</strong>: 반도체 초과세수를 바탕으로 2027년도 예산안(820.9조 원)의 약 20% 규모로 편성된 정부의 별도 기금 통장입니다.</li>
-                    <li>• <strong class="text-sky-300">핵심 쟁점 1 (투자 vs 채무상환)</strong>: <strong class="text-white">더불어민주당</strong>은 "미래 대비 투자 및 신규 국채 발행을 대체할 12.5조 원이 포함돼 있다"며 지지하는 반면, <strong class="text-white">국민의힘</strong>은 "국가채무 상환이 우선이며 정부 마음대로 쓰는 쌈짓돈이 될 수 있다"고 반발하고 있습니다.</li>
-                    <li>• <strong class="text-rose-300">핵심 쟁점 2 (지속가능성)</strong>: 국회예산정책처가 <strong class="text-amber-300">2028년 약 57조 원을 끝으로 반도체 추가세수가 소멸</strong>할 것으로 예측하면서, '청년미래적금' 등 경직성 지출 부담을 둘러싼 공방이 <strong class="text-white">12월 2일 본회의 처리 시한</strong>까지 이어질 전망입니다.</li>
-                  </ul>
-                </div>
-
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-xs sm:text-sm font-extrabold text-rose-400">🔐 [SLIDE 07 · 외교·안보·보안] 공군 1호기 168명 여권번호 유출, 공공기관 2,100곳 점검 &amp; 북한 담화</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-semibold">뉴닉 · 매경</span>
-                  </div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">대통령 전용기 탑승 명단 유출</strong>: 지난 6월 유럽 순방 당시 공군 1호기에 탑승한 <strong class="text-rose-300">이재명 대통령 내외 및 참모·경호관·주치의 등 168명</strong>의 이름·소속·생년월일·여권번호가 외국 보안 유료 사이트(다크웹)에 5개월간 노출된 사실이 확인되어 외교부가 여권 전원 재발급 및 유출 경로 조사에 착수했습니다.</li>
-                    <li>• <strong class="text-white">국정원 2,100곳 긴급 보안점검</strong>: 국정원이 최근 금융권 해킹 및 PHP 웹서버 취약점 발견에 따라 중앙부처·공공기관 2,100여 곳에 긴급 보안점검을 요청했습니다.</li>
-                    <li>• <strong class="text-white">북한 김여정 전면 부인 담화</strong>: 북한 김여정 노동당 총무부장은 미 FBI의 바이낸스 해킹 배후 지목에 대해 "정치적 도발"이라며 전면 부인 담화를 발표했습니다.</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "네 번째 코너는 정치와 사회, 보안 이슈입니다. 지금 국회에서는 내년도 예산안의 20%에 달하는 162조 3천억 원 규모의 미래대응기금을 두고 여야가 치열하게 맞서고 있습니다.",
-              "반도체 호황으로 더 걷힌 세금을 별도 통장에 모아두자는 구상인데, 여당인 민주당은 미래 산업 투자와 국채 발행 대체분 12조 5천억 원이 포함돼 있다며 찬성하는 반면, 야당인 국민의힘은 국가채무부터 갚는 게 우선이고 정부 쌈짓돈이 될 수 있다며 반대하고 있습니다.",
-              "특히 국회예산정책처가 2028년 이후에는 반도체 추가세수가 사라질 것으로 전망하면서, 다음 달 2일 예산안 처리 시한까지 가장 뜨거운 쟁점이 될 전망입니다.",
-              "보안 분야에서는 아찔한 소식이 전해졌습니다. 지난 6월 유럽 순방 당시 대통령 전용기인 공군 1호기에 탑승했던 이재명 대통령 내외와 참모, 경호관 등 168명의 여권번호와 생년월일이 외국 유료 사이트에 5개월간 노출된 사실이 확인돼 외교부가 전원 여권 재발급에 나섰습니다.",
-              "아울러 금융권 연쇄 해킹에 이어 웹서버 취약점까지 발견되면서 국정원이 전국 공공기관 2,100곳에 긴급 보안점검을 요청했고, 법원에서는 판사 10명 중 7명꼴인 67.5%가 소송 서면에서 AI가 지어낸 가짜 판례를 제출받은 적이 있다는 첫 조사 결과가 나와 충격을 주었습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · SLIDE 07 & 08 · 사법 · 테크 · 국제 · 오늘의 일정",
-            title: "5부. 법원 AI 가짜 판례 비상, 갤럭시Z 폴드8 반사이익, 일본 초봉 통일 & 오늘의 일정",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                    <div class="text-xs font-extrabold text-purple-300 mb-1.5">⚖️ 법원 'AI 가짜 판례' 비상(67.5%) &amp; 갤럭시Z 폴드8</div>
-                    <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                      <li>• <strong class="text-white">판사 67.5% 'AI 허위 판례' 경험</strong>: 대법원 법원행정처 첫 실태조사 결과 각급 법원 판사 360명 중 <strong class="text-rose-400">67.5%</strong>가 소송 서면에서 실제로 존재하지 않는 AI 생성 가짜 판례를 제출받은 경험이 있다고 답해 대책 마련이 시급해졌습니다.</li>
-                      <li>• <strong class="text-white">갤럭시Z 폴드8 판매량 20% 급증</strong>: 애플 첫 폴더블폰 '아이폰 듀오'의 품질 논란과 공급 부족이 겹치며 국내 출시 후 오히려 삼성 갤럭시Z 폴드8 판매량이 <strong class="text-emerald-400">20% 이상 증가</strong>했습니다.</li>
-                    </ul>
-                  </div>
-
-                  <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                    <div class="text-xs font-extrabold text-sky-300 mb-1.5">🌏 일본 초봉 통일·한본어 열풍 &amp; 최민정 2연속 금메달</div>
-                    <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                      <li>• <strong class="text-white">일본 미스미그룹 초봉 통일 &amp; 한본어</strong>: 공장자동화 기업 미스미그룹이 AI의 신입 업무 대체에 따라 11월부터 고졸·대졸 구분 없이 초봉을 <strong class="text-teal-300">월 257만 원</strong>으로 통일하는 통합 채용을 시행하며, 일본 Z세대에서는 한국어를 섞어 쓰는 '한본어' 열풍이 확산 중입니다.</li>
-                      <li>• <strong class="text-white">쇼트트랙 최민정 2연속 우승</strong>: 이번 시즌 후 국가대표 은퇴를 예고한 최민정 선수가 캐나다 몬트리올 월드투어 2차 대회 여자 1,000m에서 막판 두 바퀴 역전극으로 <strong class="text-amber-300">2연속 금메달(시즌 메달 7개)</strong>을 획득했습니다.</li>
-                      <li>• <strong class="text-white">미국 중간선거 안내</strong>: 미 중간선거 결과 및 공식 정보는 USA.gov 선거 안내 포털 및 Reuters 등 공신력 있는 채널을 통해 확인 가능합니다.</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div class="bg-teal-950/60 border border-teal-500/40 rounded-xl p-3.5">
-                  <div class="text-xs sm:text-sm font-extrabold text-teal-300 mb-1.5">📅 [SLIDE 08] 오늘(11월 4일 수요일) 주요 경제·실적 일정 및 영준님 캘린더 리마인더</div>
-                  <ul class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
-                    <li>• <strong class="text-white">국내외 주요 실적 및 공모주 일정</strong>: 오늘 국내 증시에서는 <strong class="text-teal-300">한화·카카오뱅크·SK텔레콤·LG유플러스·에스엠·산일전기</strong>, 미국 증시에서는 <strong class="text-teal-300">퀄컴·ARM·맥도날드·우버·도어대시</strong>가 실적을 발표하며, 항암 신약 개발사 <strong class="text-white">넥스아이</strong> 등의 코스닥 공모주 청약이 진행됩니다.</li>
-                    <li>• <strong class="text-amber-300">🐾 영준님 오늘의 필수 일정 리마인더</strong>: 오늘(11월 4일 수요일)은 Google 캘린더에 등록된 <strong class="text-amber-300">반려동물 심장사상충 정기 예방일</strong>입니다. 간식·사료 급여 직후 예방약 투약(또는 도포)을 잊지 말고 챙겨주시기 바랍니다!</li>
-                  </ul>
-                </div>
-              </div>
-            `,
-            sentences: [
-              "마지막 다섯 번째 코너, 테크와 글로벌 소식 그리고 오늘 영준님이 꼭 챙기셔야 할 일정입니다.",
-              "애플의 첫 폴더블폰인 아이폰 듀오가 화면 결함 논란과 공급 부족을 겪으면서, 국내 출시 이후 오히려 경쟁 모델인 삼성 갤럭시Z 폴드8 판매량이 20% 이상 껑충 뛰는 반사이익을 누리고 있습니다.",
-              "해외에서는 일본의 대표 부품기업 미스미그룹이 AI가 신입사원 업무를 대체하는 흐름에 맞춰 이달부터 고졸과 대졸 구분 없이 초봉을 월 257만 원으로 통일하는 파격적인 채용 제도를 도입했고, 쇼트트랙 최민정 선수는 월드투어 2차 대회 1,000미터에서 짜릿한 역전극으로 2연속 금메달을 목에 걸었습니다.",
-              "오늘 국내 증시에서는 카카오뱅크와 SK텔레콤, 한화가, 미국 증시에서는 퀄컴과 ARM이 실적을 발표하며, 미국 중간선거 공식 결과는 미국 정부 선거 안내 포털과 주요 외신을 통해 확인하실 수 있습니다.",
-              "그리고 영준님, 오늘 11월 4일 수요일은 캘린더에 등록된 반려동물 심장사상충 정기 예방일입니다! 퇴근 후 간식이나 사료를 급여하신 직후에 예방약 챙겨주시는 것 잊지 마시고요, 오늘도 활기차고 기분 좋은 수요일 보내세요! 감사합니다."
-            ]
-          }
-        ]
-      },
-
-      // -----------------------------------------------------------------------
-      // 2. 2026-11-03 (화)
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-11-03",
-        shortLabel: "11/03 (화)",
-        badgeText: "2026.11.03 (화) 보관본",
-        mainTitle: "2026년 11월 3일 (화) 평일 종합 시사·경제 브리핑",
-        subTitle: "코스피 5,859 회복, 기금형 퇴직연금 & 주식 T+1 결제 단축, 서울 월세 +15%, 금융권 AI 해킹 외",
-        tabLabels: ["1부. 증시·유가급락", "2부. 기금형연금·T+1", "3부. 월세급등·초과세수", "4부. AI해킹·예산연설", "5부. 잠수교·글로벌"],
-        execCards: [
-          {
-            num: "01",
-            color: "sky",
-            jumpChapter: 0,
-            title: "코스피 5,800선 탈환 및 국제유가 6% 급락",
-            bullets: [
-              "기관 매수세와 SK하이닉스(+4.7%)·삼성전자(+2.0%) 반등에 힘입어 <strong class='text-emerald-400'>코스피 5,859.08(+2.24%)</strong>로 5,800선 회복.",
-              "간밤 뉴욕 증시는 미·이란 평화 협상 기대감에 따른 <strong class='text-sky-300'>국제 유가 급락(WTI $97.65, -6.17%)</strong>으로 다우(+0.42%)는 상승했으나 오라클(-8.85%)·마벨(-12.72%) 약세로 나스닥(-1.07%) 하락."
-            ]
-          },
-          {
-            num: "02",
-            color: "emerald",
-            jumpChapter: 1,
-            title: "기금형 퇴직연금 도입 & 주식 결제 T+1일 단축",
-            bullets: [
-              "전문 수탁법인이 분산 운용하는 <strong class='text-emerald-400'>'기금형 퇴직연금'</strong> 법안 추진 및 기존 계약형에서도 <strong class='text-teal-300'>IRP 위험자산 한도(70%) 단계적 완화·IMA 편입 허용</strong>.",
-              "한국거래소 등 4개 유관기관이 54년 만에 국내 주식 결제주기를 <strong class='text-amber-300'>T+2일에서 T+1일(2028년 목표)</strong>로 단축하는 로드맵 발표."
-            ]
-          },
-          {
-            num: "03",
-            color: "amber",
-            jumpChapter: 2,
-            title: "서울 월세 +15% 급등, 노동 몫 최저 & 초과세수 63조",
-            bullets: [
-              "전세 매물 감소 속에 <strong class='text-rose-400'>서울 아파트 평균 월세 1년 새 15% 이상 급등</strong>, 5대 은행 10월 가계대출 2.7조 원 증가 전환.",
-              "국민연금 수급자 800만 명 돌파(66%는 월 60만 원 미만), 2분기 GDP 대비 노동소득 비중 41%로 역대 최저, 올해 <strong class='text-sky-300'>63.2조 원 초과세수</strong> 전망."
-            ]
-          },
-          {
-            num: "04",
-            color: "rose",
-            jumpChapter: 3,
-            title: "금융권 20곳 AI 해킹 & 820.9조 예산안 시정연설",
-            bullets: [
-              "국내 금융사 20곳을 공격한 해커가 중국산 AI 에이전트 'ARTEX'와 '클로드코드'를 결합해 보안 허점을 탐색한 사실 확인. 바이낸스는 해킹 여파로 4.87조 원 순유출.",
-              "이재명 대통령 국회 시정연설에서 역대 최대 <strong class='text-amber-300'>820.9조 원 예산안</strong> 발표, 한강 잠수교 전면 보행화 리모델링 착수."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · 마켓 & 매크로 지표 (11/03)",
-            title: "1부. 코스피 5,859선 회복과 국제 유가 6% 급락, 미 증시 혼조",
-            summaryCardHtml: `
-              <div class="space-y-3">
-                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
-                  전일(11월 2일) 국내 증시는 기관 매수세와 SK하이닉스(+4.7%)·삼성전자(+2.0%) 반등에 힘입어 <strong class="text-emerald-400">코스피 5,859.08(+2.24%, ▲128.34)</strong>, <strong class="text-emerald-400">코스닥 734.36(+1.38%)</strong>으로 회복했습니다. 간밤 뉴욕 증시는 카타르 중재 미·이란 평화 협상 기대감에 <strong class="text-teal-300">WTI 유가가 $97.65(-6.17%)</strong>로 급락하며 다우지수(+0.42%)와 미 10년물 국채금리(연 4.90% 안정)에 호재로 작용했으나, 오라클(-8.85%, 200억 달러 채권·주식 발행)과 마벨(-12.72%) 약세로 <strong class="text-rose-400">S&amp;P500(-0.51%)·나스닥(-1.07%)</strong>은 하락 마감했습니다. 원·달러 환율은 1,343.80원(+9.50원)을 기록했습니다.
-                </p>
-              </div>
-            `,
-            sentences: [
-              "11월 3일 화요일 모닝 라디오 브리핑입니다. 먼저 국내외 금융시장 흐름부터 살펴보겠습니다.",
-              "어제 우리 증시는 기관 매수세와 삼성전자, SK하이닉스의 반등에 힘입어 코스피가 2.24% 오른 5,859.08로 단숨에 5,800선을 회복했습니다.",
-              "간밤 뉴욕 증시는 미·이란 평화협상 기대감으로 서부텍사스산 원유가 6% 넘게 급락한 배럴당 97달러 선으로 내려오면서 인플레이션 우려를 덜어주었는데요.",
-              "다만 오라클이 200억 달러 규모의 자금 조달 계획을 공시하며 8.8% 하락한 여파로 다우지수는 0.42% 오른 반면 나스닥은 1.07% 조정을 받았습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · 연금 · 금융제도 심층 (11/03)",
-            title: "2부. '기금형 퇴직연금' 완전 분석, IRP 위험자산 한도 완화 & 주식 T+1일 결제",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-teal-300">• 기금형 퇴직연금 도입 &amp; IRP 위험자산 한도(70%) 완화 (연금술사 476호):</strong> 퇴직연금 553.8조 원 중 75.4%가 원리금보장형에 묶여 평균 수익률(6.47%)이 국민연금(18.82%)에 뒤처지자, 정부가 전문 수탁법인이 분산 운용하는 '기금형 퇴직연금(근로복지공단 푸른씨앗 누적 34.48% 모델)' 법안을 추진합니다. 특히 기존 계약형에서도 <strong class="text-amber-300">IRP 위험자산 투자 한도(현행 70%)를 단계적으로 풀고 IMA·발행어음 편입을 허용</strong>해 지원님 IRP 계좌의 운용 폭이 넓어집니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-sky-300">• 국내 주식 결제주기 54년 만에 'T+2일 → T+1일' 단축 추진 &amp; 오픈AI 방한:</strong> 한국거래소 등 4개 기관이 2028년 도입을 목표로 주식 매도 후 다음 영업일에 바로 현금을 인출할 수 있는 T+1일 단축 로드맵을 발표했습니다. 한편 오픈AI는 상장 전 투자유치에서 목표(300억 달러)에 못 미치는 110억 달러를 조달했고, 방한한 샘 올트먼 CEO는 삼성·SK 경영진과 AI 반도체 협력을 논의했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "두 번째 코너는 영준님과 지원님의 연금 계좌에 직결되는 반가운 제도 변화 소식입니다.",
-              "정부가 퇴직연금 수익률을 높이기 위해 전문 기금이 알아서 분산 투자해 주는 기금형 퇴직연금 도입과 함께, 현행 70%로 묶여 있는 IRP 계좌의 위험자산 투자 한도를 단계적으로 완화하기로 했습니다.",
-              "아울러 한국거래소 등 금융 유관기관들이 54년 만에 주식 결제 주기를 이틀에서 하루, 즉 T+1일로 단축하는 로드맵을 발표해 앞으로는 주식을 판 다음 날 바로 현금을 찾을 수 있게 됩니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · 부동산 · 거시경제 · 세수 (11/03)",
-            title: "3부. 서울 아파트 월세 +15% 급등, 노동소득 비중 최저 & '초과세수 63조' 독해법",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-rose-300">• 서울 월세 1년 새 15% 급등 &amp; 5대 은행 가계대출 +2.7조 재증가:</strong> 전세 매물 감소 속에 서울 아파트 평균 월세가 1년 새 15% 이상(광진·영등포·송파 20%↑) 급등했고, 10월 5대 은행 가계대출이 2조 7,000억 원 증가 전환했습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-amber-300">• 국민연금 수급자 800만 명 돌파, 노동 몫 41% 역대 최저 &amp; 63.2조 초과세수:</strong> 국민연금 수급자의 66%가 월 60만 원 미만을 수령해 개인·퇴직연금 다층 준비가 필수적이며, 2분기 GDP 대비 노동소득 비중은 41%로 역대 최저를 기록했습니다. 올해 63.2조 원 초과세수는 반도체 호황에 따른 법인세·성과급 소득세 증가 영향입니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "세 번째 코너는 부동산과 거시경제 지표입니다. 전세 매물이 줄어들면서 서울 아파트 평균 월세가 1년 사이 15% 이상 급등했고, 5대 은행 가계대출도 한 달 만에 2조 7천억 원 증가로 돌아섰습니다.",
-              "한편 국민연금 수급자가 800만 명을 돌파했지만 3명 중 2명은 월 60만 원 미만을 받고 있어, 영준님과 지원님처럼 연금저축과 ISA, IRP를 꾸준히 적립하는 다층 연금 전략의 중요성이 다시금 확인되었습니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · 보안 · 정치 · 사법 행정 (11/03)",
-            title: "4부. 금융권 20곳 뚫은 'AI 해킹' 실체, 바이낸스 자금 유출 & 820.9조 예산안 시정연설",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-rose-400">• 금융권 20곳 공격한 'AI 해킹(ARTEX + 클로드코드)' &amp; 바이낸스 4.87조 순유출:</strong> 최근 국내 금융사 20곳을 공격한 해커 1명이 중국산 오픈소스 AI 에이전트 'ARTEX'와 앤트로픽 '클로드코드'를 결합해 보안 허점을 고속 탐색한 사실이 드러났습니다. 8.4조 원 해킹을 당한 바이낸스에서는 출금 재개 직후 4조 8,700억 원이 순유출되었습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-sky-300">• 2027년도 예산안(820.9조 원) 시정연설 &amp; 개정 형소법 시행 한 달:</strong> 이재명 대통령이 국회 시정연설에서 역대 최대인 820.9조 원 예산안을 설명하며 '모두의 성장'을 강조했습니다. 한편 경찰이 수사를 주도하고 공소청이 기소만 맡는 개정 형소법 시행 한 달 만에 경찰이 수배 사건 1,954건을 떠안으며 일선 인력 부족이 부각되었습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "네 번째 코너는 보안과 정치 이슈입니다. 최근 한 달간 국내 금융사 20곳을 동시에 노린 해커가 중국산 AI 에이전트와 클로드코드를 결합해 자동화된 해킹을 감행한 것으로 밝혀져 금융보안에 비상이 걸렸습니다.",
-              "정치권에서는 이재명 대통령이 국회 시정연설에 나서 역대 최대인 820조 9천억 원 규모의 내년도 예산안을 설명하며 모두의 성장으로의 대전환을 강조했습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · 사회 · 국제 · 미디어 (11/03)",
-            title: "5부. 서울마라톤 교통 논란, 한강 잠수교 완전 보행화, 독일 시위 & 인스타 90분 롱폼",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-teal-300">• 잠수교 완전 보행화 리모델링 &amp; 부산 시민 사과 트럭 선행:</strong> JTBC 서울마라톤으로 시내버스 190개 노선이 우회하며 교통 통제 논란이 일었고, 차량 통행이 전면 중단된 한강 잠수교는 2027년 8월까지 전망 공간 22곳을 갖춘 보행전용교로 리모델링됩니다. 부산 연산역에서는 전도된 트럭의 사과 상자를 시민들이 함께 수습해 감동을 주었습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-purple-300">• 독일 청년 10만 명 시위 &amp; 인스타그램 90분 가로형 롱폼 '피처스':</strong> 독일 30개 도시에서 교육·주거난에 항의하는 청년 10만 명 시위가 열렸고, 인스타그램은 최대 90분 길이의 가로형 롱폼 영상 기능 '피처스'를 시험 도입했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "마지막 다섯 번째 코너입니다. 차량 통행이 중단된 한강 잠수교가 내년 8월까지 완전 보행전용 다리로 탈바꿈하고, 인스타그램은 유튜브에 맞서 최대 90분 길이의 가로형 롱폼 영상 기능을 시험 도입했습니다.",
-              "이상으로 11월 3일 화요일 브리핑을 마칩니다."
-            ]
-          }
-        ]
-      },
-
-      // -----------------------------------------------------------------------
-      // 3. 2026-11-02 (월)
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-11-02",
-        shortLabel: "11/02 (월)",
-        badgeText: "2026.11.02 (월) 보관본",
-        mainTitle: "2026년 11월 2일 (월) 평일 종합 시사·경제 브리핑",
-        subTitle: "알파벳 시총 670조 증발 & 인텔 -28.5% 폭락, 한국 10월 수출 +93.7%, 저PBR 151곳 공개, 바이낸스 해킹 외",
-        tabLabels: ["1부. 미기술주·수출호조", "2부. 알파벳·애플1위", "3부. 저PBR·IRP국채", "4부. 바이낸스·정책검증", "5부. 응급실·터치맥북"],
-        execCards: [
-          {
-            num: "01",
-            color: "rose",
-            jumpChapter: 0,
-            title: "미 반도체 급락 여파 코스피 조정 vs 한국 10월 수출 +93.7% 폭증",
-            bullets: [
-              "알파벳(-12.6%)과 인텔(-28.58%, 50년 만의 최대 폭락) 쇼크로 필라델피아 반도체지수가 7.20% 급락하며 <strong class='text-rose-400'>코스피 5,730.74(-3.48%)</strong> 조정.",
-              "반면 실물경제에서는 <strong class='text-emerald-400'>10월 한국 수출액이 전년비 +93.7% 폭증한 1,152.8억 달러(반도체 +259.4%)</strong>로 1~10월 누적 수출 사상 첫 9,000억 달러 돌파."
-            ]
-          },
-          {
-            num: "02",
-            color: "amber",
-            jumpChapter: 1,
-            title: "알파벳 시총 670조 증발의 3대 원인과 애플 시총 1위 탈환",
-            bullets: [
-              "알파벳은 ① AI 검색 역설(광고 클릭 둔화), ② 2분기 연속 FCF 적자(-91억 달러), ③ 임대 데이터센터 <strong class='text-rose-400'>우발 채무보증 985억 달러(132조 원)</strong>로 하루에 시총 670조 원 증발.",
-              "마이크로소프트는 유일하게 FCF 24.8조 흑자를 방어했고, <strong class='text-sky-300'>애플은 엔비디아를 제치고 시총 1위</strong>를 탈환."
-            ]
-          },
-          {
-            num: "03",
-            color: "emerald",
-            jumpChapter: 2,
-            title: "저PBR 상장사 151곳 거래화면 표시 & IRP 개인투자용 국채 허용",
-            bullets: [
-              "한국거래소가 3년간 PBR 하위권에 머문 <strong class='text-amber-300'>151개 상장사(평균 PBR 0.25배)</strong> 명단을 공개하고 증권사 화면에 표시.",
-              "DC형·IRP 계좌에서 <strong class='text-emerald-400'>개인투자용 국채(10·20년물)</strong> 편입 허용, 한화는 미 해군 상륙함(3,600억 원) 첫 수주, 토스는 일본 치어증권 인수."
-            ]
-          },
-          {
-            num: "04",
-            color: "sky",
-            jumpChapter: 3,
-            title: "바이낸스 8.4조 해킹, 아주대 소아응급실 사직 & 터치 맥북 프로",
-            bullets: [
-              "세계 최대 가상자산 거래소 <strong class='text-rose-400'>바이낸스에서 8.4조 원 해킹 발생(FBI 북한 배후 지목)</strong>, 이주노동자 해외송금 비중 정부 통계 팩트체크(25.5%).",
-              "아주대병원 소아응급실 압수수색 파장으로 전문의 집단 사직, 원로배우 최불암 별세, 애플 42년 만의 첫 <strong class='text-teal-300'>터치스크린 맥북 프로</strong> 공개."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · 마켓 & 10월 수출 대기록 (11/02)",
-            title: "1부. 미 반도체 급락에 따른 코스피 조정 vs 한국 10월 수출 +93.7% 대기록",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  직전 거래일 알파벳(-12.6%)과 인텔(-28.58%) 폭락으로 필라델피아 반도체지수가 7.20% 급락하며 <strong class="text-rose-400">코스피는 5,730.74(-3.48%)</strong>, <strong class="text-rose-400">코스닥은 724.38(-3.83%)</strong>로 밀렸습니다(보안주 안랩은 +17.98% 급등). 그러나 <strong class="text-emerald-400">10월 한국 수출액은 전년비 +93.7% 폭증한 1,152억 8,000만 달러(반도체 $564.4억, +259.4%)</strong>로 1~10월 누적 수출이 사상 처음 9,000억 달러를 돌파하며 세계 4번째 '연 1조 달러 수출'을 눈앞에 두었습니다. 미 서머타임 해제로 미 정규장은 한국 시각 23:30~06:00에 운영됩니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "11월 2일 월요일 모닝 라디오 브리핑입니다. 먼저 증시와 수출 지표부터 살펴보겠습니다.",
-              "미국 증시에서 알파벳과 인텔이 급락한 여파로 코스피가 3.48% 조정받은 5,730.74로 마감했지만, 우리나라 10월 수출은 반도체가 무려 259% 폭증하며 사상 처음으로 10월 누적 수출 9,000억 달러를 돌파했습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · 빅테크 심층 분석 (11/02)",
-            title: "2부. 알파벳 시총 670조 증발의 3대 원인과 MS 흑자 방어·애플 시총 1위 탈환",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-amber-300">• 알파벳 하루 670조 증발 3대 원인:</strong> ① 상단 AI 요약으로 광고 클릭 증가율이 13%→8%로 둔화된 'AI 검색의 역설', ② 데이터센터 지출로 상장 후 첫 2분기 연속 FCF 적자(-91억 달러) 및 약정 1조 달러 부담, ③ 임대 데이터센터·전력업체 대출에 서준 숨겨진 '우발 채무보증' 985억 달러(약 132조 원) 확인.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-emerald-300">• MS FCF 흑자 방어 &amp; 애플 시총 1위 탈환:</strong> 마이크로소프트는 애저(+48%) 호조로 하이퍼스케일러 중 유일하게 3분기 FCF 186.3억 달러(24.85조 원) 흑자를 지켰고, 애플은 기기 생태계 강점을 인정받으며 엔비디아를 제치고 시총 1위를 탈환했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "두 번째 코너는 빅테크 심층 분석입니다. 구글 모회사 알파벳이 하루 만에 시가총액 670조 원이 증발했는데요, AI 검색 요약 때문에 광고 클릭이 둔화된 데다 임대 데이터센터에 서준 우발 채무보증이 132조 원에 달한다는 점이 부각됐기 때문입니다.",
-              "반면 마이크로소프트는 클라우드 성장에 힘입어 25조 원 가까운 잉여현금흐름 흑자를 지켰고, 애플은 엔비디아를 제치고 시가총액 1위 자리를 되찾았습니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · 금융 · 산업 · 재테크 (11/02)",
-            title: "3부. 저PBR 상장사 151곳 거래화면 표시, IRP 개인투자용 국채 & 한화 미 함정 수주",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-teal-300">• 저PBR 151곳 공개 &amp; IRP 개인투자용 국채:</strong> 한국거래소가 3년간 PBR 하위권에 머문 151개 상장사(평균 PBR 0.25배) 명단을 오늘부터 증권사 거래 화면에 표시해 주주환원을 압박합니다. 또한 DC형·IRP 계좌에서 개인투자용 국채 10·20년물 매수가 허용되었으며, KRX 금값은 고점 대비 31.4% 낮아진 g당 171,020원을 기록했습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-sky-300">• 한화 미 해군 함정 첫 수주 &amp; 토스 일본 진출:</strong> 한화가 필리조선소 인수 후 처음으로 미 해군 상륙함 1척(3,600억 원, 추가 3척 옵션) 건조 계약을 따냈고, 토스는 일본 치어증권을 인수하며 첫 해외 M&amp;A에 나섰습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "세 번째 코너입니다. 오늘부터 증권사 거래 화면에 주가순자산비율이 지나치게 낮은 저PBR 상장사 151곳이 직접 표시되며, IRP 계좌에서도 개인투자용 국채를 담을 수 있게 되었습니다.",
-              "산업계에서는 한화가 미국 해군 상륙함 건조 계약을 처음으로 수주했고, 토스는 일본 증권사를 인수하며 해외 시장 공략에 나섰습니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · 정치 · 글로벌 보안 (11/02)",
-            title: "4부. 이주노동자·다문화 발언 통계 팩트체크 & 바이낸스 8.4조 원 해킹 사태",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-amber-300">• 이주노동자·다문화 가정 관련 정부 통계 팩트체크 (뉴닉):</strong> 국무회의 발언 논란과 관련해 정부 조사 통계를 확인한 결과, 국내 거주 외국인의 총소득 중 해외 송금 비중은 25.5%에 불과해 대부분 해외로 송금된다는 주장은 사실과 다르며, 서울형 안심 산후조리원 이용 산모 361명 중 다문화 산모도 10명(2.7%)에 그친 것으로 나타났습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-rose-400">• 바이낸스 8.4조 원 해킹 (미 FBI "북한 배후") &amp; 방화벽 서버 25대 장악:</strong> 세계 최대 가상자산 거래소 바이낸스에서 관리 직원 노트북 해킹으로 약 63억 달러(8.4조 원) 해킹이 발생해 FBI가 북한을 배후로 지목했으며, 바이낸스는 4조 원 동결 및 전액 보상을 약속했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "네 번째 코너는 시사와 글로벌 보안 소식입니다. 세계 최대 가상자산 거래소 바이낸스에서 8조 4천억 원 규모의 사상 최대 해킹이 발생해 미국 FBI가 북한을 배후로 공식 지목했습니다.",
-              "국내에서는 이주노동자 해외 송금 및 다문화 산후조리원 관련 논란에 대해 정부 공식 통계를 바탕으로 한 팩트체크가 진행되었습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · 의료 · 문화 · 테크 (11/02)",
-            title: "5부. 아주대 소아응급실 사직 사태, 배우 최불암 별세 & 애플 첫 터치 맥북 프로",
-            summaryCardHtml: `
-              <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-rose-300">• 아주대병원 소아응급실 사직 사태, 계엄 회동 무죄 &amp; 계층 이동률 최저:</strong> 경찰 압수수색 여파로 아주대병원 소아응급실 전문의 9명 중 8명이 사직서를 제출해 진료 공백 우려가 커졌고, 소득 계층 상향 이동 비율은 16.9%로 2017년 이후 최저치를 기록했습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-teal-300">• 원로배우 최불암 별세 &amp; 애플 42년 만의 첫 '터치 맥북 프로' 공개:</strong> '수사반장'과 '한국인의 밥상'으로 사랑받은 배우 최불암 씨가 별세해 추모가 이어졌으며, 애플은 매킨토시 출시 42년 만에 처음으로 화면 터치가 가능한 맥북 프로(ProLED XDR)를 공개했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "마지막 다섯 번째 코너입니다. 아주대병원 소아응급실 전문의들이 경찰 압수수색에 반발해 집단 사직서를 제출하면서 소아응급 의료 공백 우려가 커졌고, 문화계에서는 국민 아버지로 불리던 원로배우 최불암 씨의 별세 소식에 추모 물결이 이어졌습니다.",
-              "테크 업계에서는 애플이 42년 만에 처음으로 화면을 직접 터치할 수 있는 신형 맥북 프로를 공개했습니다. 이상으로 11월 2일 브리핑을 마칩니다."
-            ]
-          }
-        ]
-      },
-
-      // -----------------------------------------------------------------------
-      // 3-B. 2026-11-01 (일) [주간 매크로 및 뉴스레터 총결산]
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-11-01",
-        isWeekly: true,
-        shortLabel: "11/01 (일·주간결산)",
-        badgeText: "2026.11.01 (일) 주간 총결산",
-        mainTitle: "10월 5주차 주간 매크로 및 구독 뉴스레터 총결산 브리핑",
-        subTitle: "코스피 사상 첫 6,000 돌파 후 숨고르기, 삼성전자·SK하이닉스 210조 주주환원, 한·미·유럽·일본 금리 동결, 연금 개편 & 6대 그린벨트 해제 총정리",
-        tabLabels: ["1부. 주간증시·금리", "2부. 반도체·빅테크", "3부. 연금개편·세테크", "4부. 정치·사법·보안", "5부. 부동산·차주일정"],
-        execCards: [
-          {
-            num: "01",
-            color: "emerald",
-            jumpChapter: 0,
-            title: "주간 글로벌·국내 매크로 총결산 (코스피 6,000 돌파 후 조정 & 주요국 금리 동결)",
-            bullets: [
-              "주중 SK하이닉스·삼성전자 역대급 실적에 <strong class='text-emerald-400'>코스피 사상 첫 6,012.44 돌파</strong> 후 주말 미 빅테크 FCF 적자 우려(알파벳 -12.6%, 인텔 -28.6%)로 <strong class='text-rose-400'>5,730.74</strong> 마감. 반면 10월 한국 수출은 <strong class='text-emerald-400'>+93.7% 폭증(누적 9,000억 달러 돌파)</strong>.",
-              "<strong class='text-sky-300'>한은(3.00%)·미 연준(3.75~4.00%)·ECB(2.50%)·BOJ(1.25%)</strong> 주요국 기준금리 일제 동결, 미·이란 협상 기대감에 WTI 유가 100달러 하회."
-            ]
-          },
-          {
-            num: "02",
-            color: "sky",
-            jumpChapter: 1,
-            title: "주간 기업·산업 핵심 복기 (K-반도체 210조 주주환원 vs 미 빅테크 FCF 차별화)",
-            bullets: [
-              "<strong class='text-emerald-400'>삼성전자(3Q 영업익 107.4조·주주환원 110조)</strong>와 <strong class='text-emerald-400'>SK하이닉스(3Q 영업익 83.3조·주주환원 100조)</strong>가 HBM 완판과 대규모 배당으로 글로벌 메모리 독점력 입증.",
-              "미국 빅테크는 AI 설비투자 이후 <strong class='text-amber-300'>잉여현금흐름(FCF)</strong>에 따라 마이크로소프트·애플(시총 1위 탈환)과 알파벳(시총 670조 증발)의 주가가 극명하게 차별화."
-            ]
-          },
-          {
-            num: "03",
-            color: "amber",
-            jumpChapter: 2,
-            title: "주간 연금·재테크 핵심 복기 (퇴직연금 3대 개편 & 연말정산 세액공제 5원칙)",
-            bullets: [
-              "정부 <strong class='text-teal-300'>퇴직연금 3대 개편안</strong>(전 사업장 사외적립 의무화·기금형 퇴직연금 도입·청년층 16.5% 세액공제) 및 <strong class='text-teal-300'>연말정산 연금저축·IRP 합산 900만 원 공제 5원칙</strong> 총정리.",
-              "반도체 3배 레버리지 ETF(SOXL)의 '음의 복리' 위험 점검 및 2027년 1월 시행 예정이던 <strong class='text-sky-300'>가상자산 과세 추가 유예</strong> 가닥."
-            ]
-          },
-          {
-            num: "04",
-            color: "rose",
-            jumpChapter: 3,
-            title: "주간 정치·사회·보안·부동산 총결산 (그린벨트 7.67만 호 & 금융권 해킹 비상)",
-            bullets: [
-              "헌정사상 첫 조희대 대법원장 국정조사 추진 공방, 6·3 지방선거 투표지 247만 장 검증 완료, <strong class='text-emerald-400'>고리원전 3·4호기 계속운전 허가</strong>.",
-              "대신증권·빗썸·바이낸스(8.4조 원) 연쇄 해킹 및 북한 IP 440만 건 스캔 확인, 서울 인접 <strong class='text-sky-300'>6곳 그린벨트 해제(김포·구리·하남·고양·의정부 7.67만 호)</strong>."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · 주간 글로벌 & 국내 거시경제(Macro) 총결산",
-            title: "1부. 코스피 사상 첫 6,000 돌파 후 숨고르기, 4대 중앙은행 금리 동결 & 수출 대기록",
-            summaryCardHtml: `
-              <div class="space-y-3 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-emerald-400">• 국내외 증시 및 수출 총결산:</strong> 10월 마지막 주 우리 증시는 SK하이닉스와 삼성전자의 사상 최대 실적 발표에 힘입어 10월 28일 <strong class="text-white">코스피 6,012.44(+6.63%)</strong>로 사상 첫 6,000선을 돌파했으나, 주 후반 미국 알파벳(-12.6%)·인텔(-28.58%) 급락 여파로 차익실현 매물이 출회되며 금요일(10/30) <strong class="text-rose-400">5,730.74</strong>로 한 주를 마쳤습니다. 반면 실물경제에서는 10월 한국 수출액이 전년비 <strong class="text-emerald-400">+93.7% 폭증한 1,152.8억 달러(반도체 +260%)</strong>를 기록하며 1~10월 누적 수출 9,000억 달러를 돌파했습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-sky-300">• 한·미·유럽·일본 기준금리 동결 및 환율·유가:</strong> 한국은행(연 3.00%, 3분기 GDP +1.0%), 미 연준(연 3.75~4.00%, 3분기 GDP 연율 +3.4%), 유럽중앙은행(연 2.50%), 일본은행(연 1.25%)이 모두 금리를 동결했습니다. 원·달러 환율은 1,334~1,337원대에서 움직였고, 국제유가(WTI)는 미·이란 협상 기대감에 배럴당 99달러 선으로 안정되었습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "영준님, 한 주간의 글로벌 거시경제와 구독 뉴스레터 핵심 이슈를 총결산하는 일요일 라디오 브리핑입니다.",
-              "먼저 첫 번째 코너, 이번 주 국내외 금융시장과 거시경제 총결산입니다.",
-              "이번 주 우리 증시는 SK하이닉스와 삼성전자의 분기 영업이익 83조 원, 107조 원이라는 역사적 실적에 힘입어 주중 코스피 6,012선을 찍으며 사상 처음 6,000시대를 열었다가, 주 후반 미국 빅테크 조정 여파로 5,730선에서 숨을 골랐습니다.",
-              "통화정책에서는 한국은행과 미국 연준, 유럽중앙은행과 일본은행이 나란히 기준금리를 동결했고, 우리나라 10월 수출은 반도체가 259% 폭증하며 누적 수출 9,000억 달러를 돌파하는 쾌거를 거두었습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · 주간 기업 · 산업 · 빅테크 핵심 복기",
-            title: "2부. 삼성전자·SK하이닉스 210조 주주환원 vs 알파벳 시총 670조 증발과 애플 1위 탈환",
-            summaryCardHtml: `
-              <div class="space-y-3 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-teal-300">• K-반도체 역대 최대 실적 &amp; 210조 원 주주환원:</strong> 삼성전자(3Q 매출 195.2조·영업익 107.4조 원, 최대 110조 주주환원)와 SK하이닉스(3Q 매출 104.6조·영업익 83.3조 원, 100조 주주환원 및 3분기 배당 주당 2만 원)가 2027~2029년 HBM·D램 완판을 공식화하며 피크아웃 우려를 잠재웠습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-amber-300">• 미 빅테크의 새 평가 잣대 '잉여현금흐름(FCF)':</strong> 알파벳은 AI 검색 역설(광고 클릭 둔화), 2분기 연속 FCF 적자(-91억 달러), 임대 데이터센터 우발 채무보증(985억 달러) 등 3대 악재로 하루에 시총 670조 원이 증발했습니다. 반면 마이크로소프트는 FCF 186.3억 달러 흑자를 방어했고, 애플은 기기 생태계 강점으로 엔비디아를 제치고 시총 1위를 탈환했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "두 번째 코너는 이번 주 뉴스레터가 가장 비중 있게 다룬 반도체와 글로벌 빅테크 복기입니다.",
-              "삼성전자가 분기 영업이익 107조 원, SK하이닉스가 83조 원을 달성하며 두 회사가 합쳐 무려 210조 원 규모의 주주환원책을 내놓았고 향후 수년 치 HBM 물량 완판을 선언했습니다.",
-              "반면 미국 증시에서는 AI 데이터센터 투자 부담으로 잉여현금흐름 적자와 132조 원의 우발 채무보증이 드러난 알파벳이 하루 만에 시총 670조 원이 증발한 반면, 현금흐름을 지킨 마이크로소프트와 애플은 시총 1, 2위를 굳히며 명암이 엇갈렸습니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · 주간 연금 · 세테크 · 투자 인사이트 복기",
-            title: "3부. 퇴직연금 3대 개편안, 연말정산 세액공제 5원칙 & SOXL 음의 복리 주의",
-            summaryCardHtml: `
-              <div class="space-y-3 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-emerald-300">• 퇴직연금 3대 개편 &amp; 연말정산 세액공제 5대 원칙 (연금술사·어피티):</strong> 정부는 ① 전 사업장 퇴직급여 사외적립 단계적 의무화, ② 기금형 퇴직연금 도입 확대, ③ 청년층 연금계좌 16.5% 일괄 세액공제를 발표했고, DC·IRP 내 개인투자용 국채 편입도 허용했습니다. 연말정산 시 연금저축·IRP 합산 공제 한도는 연 900만 원(최대 148.5만 원 환급)이며 12월 일시납도 인정됩니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-sky-300">• 저PBR 151곳 거래화면 표시, 가상자산 과세 유예 &amp; SOXL 주의:</strong> 한국거래소가 저PBR 상장사 151곳(평균 PBR 0.25배)을 거래 화면에 표시해 밸류업을 압박하며, 정부는 내년 1월 가상자산 과세를 추가 유예하기로 잠정 결론 내렸습니다. 또한 일일 3배 레버리지 ETF(SOXL)는 횡보장에서 원금이 녹는 '음의 복리 효과'에 각별히 주의해야 합니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "세 번째 코너는 연금과 재테크 핵심 복기입니다. 정부가 기금형 퇴직연금 도입과 IRP 개인투자용 국채 편입 허용을 발표했고, 연말정산 시즌을 앞두고 연금저축과 IRP 합산 연 900만 원 세액공제 한도를 점검해야 할 시점입니다.",
-              "아울러 정부는 내년 1월 시행 예정이던 가상자산 과세를 추가 유예하기로 가닥을 잡았고, 한국거래소는 주주가치 제고를 위해 저PBR 상장사 151곳 명단을 공개했습니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · 주간 정치 · 사법 · 원전 · 글로벌 보안 총결산",
-            title: "4부. 조희대 대법원장 국조 추진, 고리 3·4호기 계속운전 & 금융권·바이낸스 연쇄 해킹",
-            summaryCardHtml: `
-              <div class="space-y-3 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-amber-300">• 정치·사법·원전 주요 이슈 (뉴닉 데일리):</strong> 민주당의 헌정사상 첫 조희대 대법원장 국정조사 추진으로 여야가 대치했고, 김건희 씨 구속 기간은 12월 말까지 연장되었습니다. 6·3 지방선거 투표용지 247만 장 공개 검증은 13시간 만에 완료되었으며, 원안위는 부산 고리원전 3·4호기의 계속운전을 허가했습니다.
-                </div>
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-rose-400">• 국내 금융권 3사 및 바이낸스 8.4조 원 해킹 비상:</strong> 대신증권(3.8만 명 유출)·빗썸·미래에셋 해킹 조사에서 북한 추정 IP의 440만 건 스캔 접근이 확인되었고, 세계 최대 가상자산 거래소 바이낸스에서도 8.4조 원 규모 해킹이 발생해 미 FBI가 북한을 배후로 지목했습니다.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "네 번째 코너는 정치와 사회, 보안 총결산입니다. 국회에서는 조희대 대법원장 국정조사 추진을 둘러싼 공방이 이어졌고, 6·3 지방선거 투표용지 247만 장 공개 검증 완료와 고리원전 3, 4호기 계속운전 허가 결정이 내려졌습니다.",
-              "보안 분야에서는 대신증권과 빗썸 등 국내 금융권 해킹에 이어 세계 최대 거래소 바이낸스에서 8조 4천억 원 규모의 해킹이 발생해 금융 계좌 2단계 인증과 비대면 계좌개설 안심차단 점검이 필수로 떠올랐습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · 부동산 그린벨트 해제 & 11월 1주차 주요 일정",
-            title: "5부. 수도권 그린벨트 6곳 해제(7.67만 호), 의료·문화 이슈 & 11월 첫째 주 핵심 일정",
-            summaryCardHtml: `
-              <div class="space-y-3 text-xs text-slate-200 leading-relaxed">
-                <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5">
-                  <strong class="text-teal-300">• 서울 인접 그린벨트 6곳 해제(76,700호) &amp; 사회·문화 복기:</strong> 정부가 김포 아라(3.7만 호)·구리 건원(1.46만 호)·하남미사 K-컬처(1.2만 호)·하남 감일2(6,500호)·고양 대곡(4,000호)·의정부 다락원(2,600호) 6곳 그린벨트를 해제해 2030년 착공을 추진합니다. 사회·문화 분야에서는 아주대병원 소아응급실 전문의 사직 사태, 원로배우 최불암 별세, 애플 첫 터치 맥북 프로 공개가 주요 화제였습니다.
-                </div>
-                <div class="bg-teal-950/60 border border-teal-500/40 rounded-xl p-3.5">
-                  <strong class="text-amber-300">• 11월 1주차(11/2~11/6) 주요 경제·개인 일정:</strong> 미 서머타임 해제(정규장 23:30 개장), 미국 중간선거(11/3), 한국 10월 소비자물가(11/3), 미 10월 고용보고서(11/6) 및 팔란티어·AMD·퀄컴·포스코·LG엔솔·현대차·SKT·카카오 실적 발표 / 영준님 캘린더: 11/4(수) 반려동물 심장사상충 예방일, 11/6(금) 네이버 멤버십 갱신일.
-                </div>
-              </div>
-            `,
-            sentences: [
-              "마지막 다섯 번째 코너는 부동산 공급 대책과 다음 주 핵심 일정입니다. 정부가 김포와 구리, 하남, 고양 등 서울 인접 그린벨트 6곳을 해제해 7만 6,700가구를 공급하기로 했습니다.",
-              "11월 첫째 주에는 미국 중간선거와 한국 소비자물가 발표, 주요 빅테크 실적 발표가 이어지며, 수요일인 11월 4일은 반려동물 심장사상충 예방일, 금요일인 11월 6일은 네이버 멤버십 갱신일이 예정되어 있습니다. 이상으로 주간 총결산 브리핑을 마칩니다."
-            ]
-          }
-        ]
-      },
-
-      // -----------------------------------------------------------------------
-      // 4. 2026-10-30 (금)
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-10-30",
-        shortLabel: "10/30 (금)",
-        badgeText: "2026.10.30 (금) 보관본",
-        mainTitle: "2026년 10월 30일 (금) 평일 종합 시사·경제 브리핑",
-        subTitle: "삼성전자 분기 영업익 첫 100조 돌파(107.4조) & 110조 주주환원, 퇴직연금 3대 개편, 수도권 그린벨트 6곳 해제 외",
-        tabLabels: ["1부. 코스피·미GDP", "2부. 삼성전자107조", "3부. 연금개편·그린벨트", "4부. 금융해킹·투표검증", "5부. 스페인참사·로봇"],
-        execCards: [
-          {
-            num: "01",
-            color: "emerald",
-            jumpChapter: 1,
-            title: "삼성전자 분기 영업이익 사상 첫 100조 돌파 (107.4조 원)",
-            bullets: [
-              "삼성전자가 3분기 확정 매출 <strong class='text-emerald-400'>195.2조 원</strong>, 영업이익 <strong class='text-emerald-400'>107조 4,405억 원(영업이익률 55%)</strong>으로 글로벌 테크 최초 분기 영업익 100조 돌파.",
-              "HBM4 매출 3배 급증 및 2027년 물량 완판, 3분기 현금배당 30조 원 확정 및 <strong class='text-teal-300'>최대 110조 원 주주환원</strong> 발표."
-            ]
-          },
-          {
-            num: "02",
-            color: "sky",
-            jumpChapter: 0,
-            title: "미 3분기 GDP +3.4% 호조 vs 알파벳 FCF 적자 폭락",
-            bullets: [
-              "차익실현 매물과 체코 원전 협상 종료 여파로 <strong class='text-rose-400'>코스피 5,937.66(-1.24%)</strong> 숨고르기.",
-              "미 3분기 GDP(+3.4%) 호조에도 알파벳(-12.64%)이 AI 설비투자에 따른 잉여현금흐름 적자로 급락하며 나스닥(-1.38%) 하락 주도."
-            ]
-          },
-          {
-            num: "03",
-            color: "amber",
-            jumpChapter: 2,
-            title: "퇴직연금 3대 개편안 & 수도권 그린벨트 6곳 해제 (7.67만 호)",
-            bullets: [
-              "정부가 전 사업장 퇴직급여 사외 적립 의무화, 기금형 퇴직연금 확대, 청년층 연금계좌 <strong class='text-emerald-400'>16.5% 일괄 세액공제</strong> 개편안 발표.",
-              "서울 경계 5km 이내 <strong class='text-sky-300'>김포·구리·하남·고양·의정부 6곳 그린벨트 해제(76,700호 공급)</strong> 및 2030년 착공 기간 단축."
-            ]
-          },
-          {
-            num: "04",
-            color: "rose",
-            jumpChapter: 3,
-            title: "금융권 3사 해킹(북한 IP 440만 건 스캔) & 스페인 열차 참사",
-            bullets: [
-              "대신증권(3.8만 명 유출)·빗썸·미래에셋 해킹 속 <strong class='text-rose-400'>북한 추정 IP의 440만 건 스캔 접근</strong> 최초 확인. 6·3 지방선거 투표용지 247만 장 공개 검증 완료.",
-              "스페인 고속열차 충돌로 68명 사망, 엔비디아 소형 오리로봇 '마이크로덕' 사전주문 2만 대 돌파(로보티즈 수혜)."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · 마켓 & 매크로 지표 (10/30)",
-            title: "1부. 코스피 5,937선 숨고르기, 미 3분기 GDP +3.4% 호조 & 알파벳 급락",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                전일 국내 증시는 삼성전자 차익실현 매물(-4.13%)과 체코 두코바니 원전 국내 컨소시엄 시공 협상 종료 여파로 <strong class="text-rose-400">코스피 5,937.66(-1.24%)</strong>, <strong class="text-rose-400">코스닥 753.23(-2.34%)</strong>으로 마감했습니다. 간밤 뉴욕 증시는 미국 3분기 GDP 속보치(+3.4%) 호조와 9월 PCE 물가(+3.6%) 부합에도 알파벳(-12.64%) 급락 여파로 <strong class="text-rose-400">나스닥(-1.38%)·S&amp;P500(-0.30%)</strong>이 하락했습니다. 5대 은행 정기예금 잔고는 연 4%대 금리에 1,018조 원을 돌파했습니다.
-              </div>
-            `,
-            sentences: [
-              "10월 30일 금요일 모닝 라디오 브리핑입니다. 어제 코스피는 단기 급등에 따른 차익실현 매물로 1.24% 내린 5,937.66으로 숨을 골랐고, 간밤 뉴욕 증시는 미국 3분기 경제성장률이 3.4%로 깜짝 호조를 보였지만 알파벳 급락 여파로 나스닥이 1.38% 하락했습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · 기업 · 산업 핵심 이슈 (10/30)",
-            title: "2부. 삼성전자 분기 영업익 첫 100조 돌파(107.4조) & 빅테크 FCF 차별화",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                <strong class="text-emerald-400">• 삼성전자 영업익 107.4조 &amp; 최대 110조 주주환원:</strong> 3분기 매출 195.25조 원(+126.9%), 영업이익 107조 4,405억 원(영업이익률 55%)으로 글로벌 테크 최초 분기 영업익 100조 원을 돌파했습니다. HBM4 매출이 3배 급증해 전체 HBM의 60%를 차지했고 2027년 물량도 완판되었으며, 3분기 현금배당 30조 원 및 최대 110조 원 주주환원을 발표했습니다. 삼성SDI도 ESS 호조로 영업익 4,078억 원(2분기 연속 흑자)을 달성했습니다.
-              </div>
-            `,
-            sentences: [
-              "두 번째 코너입니다. 삼성전자가 3분기 확정 영업이익 107조 4천억 원, 영업이익률 55%라는 경이적인 기록으로 글로벌 테크 기업 최초 분기 영업이익 100조 시대를 열며 최대 110조 원 규모의 주주환원책을 발표했습니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · 연금 · 매크로 · 부동산 (10/30)",
-            title: "3부. 정부 퇴직연금 3대 개편안, SOXL 음의 복리 주의 & 수도권 그린벨트 6곳 해제",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                <strong class="text-teal-300">• 퇴직연금 3대 개편 &amp; 수도권 그린벨트 7.67만 호 공급:</strong> 정부가 전 사업장 퇴직급여 사외 적립 단계적 의무화, 기금형 퇴직연금 확대, 청년층 연금계좌 16.5% 일괄 세액공제를 발표했습니다. 또한 서울 경계 5km 이내 경기권 6곳(김포 아라 3.7만 호, 구리 건원 1.46만 호, 하남미사 K-컬처 1.2만 호, 하남 감일2 6,500호, 고양 대곡 4,000호, 의정부 다락원 2,600호) 그린벨트를 해제해 총 76,700호를 공급합니다.
-              </div>
-            `,
-            sentences: [
-              "세 번째 코너입니다. 정부가 퇴직연금 사외 적립 의무화와 기금형 퇴직연금 확대를 발표했고, 부동산 시장에서는 김포와 구리, 하남, 고양 등 서울 인접 그린벨트 6곳을 해제해 7만 6,700가구를 공급하기로 했습니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · 보안 · 정치 · 사회 (10/30)",
-            title: "4부. 금융권 3사 해킹(북한 IP 440만 건 스캔), 지방선거 투표지 검증 & 수능 스마트안경 엄단",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                대신증권(38,490명 유출)·빗썸·미래에셋 해킹 조사에서 북한 추정 IP 대역이 국내 금융권에 약 440만 건의 스캔성 접근을 시도한 사실이 확인되었습니다. 올림픽공원에서는 6·3 지방선거 투표용지 247만 장 공개 검증이 13시간 만에 완료되었고, 교육부는 수능에서 AI 스마트안경 부정행위 적발 시 응시자격 정지를 3년으로 확대하고 형사 고발하기로 했습니다.
-              </div>
-            `,
-            sentences: [
-              "네 번째 코너입니다. 대신증권과 빗썸 등 금융권 해킹 조사 결과 북한 추정 IP가 국내 금융권에 440만 건의 스캔 접근을 시도한 사실이 드러났고, 6·3 지방선거 투표용지 247만 장에 대한 공개 검증은 13시간 만에 마무리되었습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · 국제 · 테크 · 로보틱스 (10/30)",
-            title: "5부. 스페인 고속열차 충돌 참사, 피지컬 AI 항만 & 오리로봇 '마이크로덕' 열풍",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                스페인 마드리드 남부에서 고속열차 2대가 충돌해 68명이 사망하고 한국인 2명을 포함해 100명 이상이 부상했습니다. 테크 분야에서는 정부가 2032년까지 무인 자율운항선박과 피지컬 AI 항만을 구축하기로 했으며, 엔비디아 젠슨 황이 시연한 소형 오리로봇 '마이크로덕' 사전주문이 2만 대를 돌파하며 핵심 구동장치를 공급하는 로보티즈가 수혜주로 부각되었습니다.
-              </div>
-            `,
-            sentences: [
-              "마지막 다섯 번째 코너입니다. 스페인에서 고속열차 충돌 사고가 발생해 안타까운 인명 피해가 났고, 테크 업계에서는 엔비디아가 시연한 소형 오리로봇 마이크로덕 사전주문이 2만 대를 돌파하며 국내 로봇 부품사 로보티즈가 주목받았습니다. 이상으로 10월 30일 브리핑을 마칩니다."
-            ]
-          }
-        ]
-      },
-
-      // -----------------------------------------------------------------------
-      // 5. 2026-10-29 (목)
-      // -----------------------------------------------------------------------
-      {
-        date: "2026-10-29",
-        shortLabel: "10/29 (목)",
-        badgeText: "2026.10.29 (목) 보관본",
-        mainTitle: "2026년 10월 29일 (목) 평일 종합 시사·경제 브리핑",
-        subTitle: "코스피 6,000선 돌파(6,012.44) & SK하이닉스 100조 주주환원, 미 연준 금리 동결, 연말정산 연금 OX 5대 원칙 외",
-        tabLabels: ["1부. 코스피6000·연준", "2부. 하이닉스100조", "3부. 연금세액공제5원칙", "4부. 사법·원전·보안", "5부. 소비복권·비만약"],
-        execCards: [
-          {
-            num: "01",
-            color: "emerald",
-            jumpChapter: 0,
-            title: "코스피 사상 첫 6,000선 돌파 (6,012.44, +6.63%) & 미 연준 금리 동결",
-            bullets: [
-              "SK하이닉스(+10.89%)·삼성전자(+9.01%) 폭등으로 매수 사이드카가 발동되며 <strong class='text-emerald-400'>코스피 6,012.44(+6.63%)</strong> 사상 첫 6,000선 탈환.",
-              "미 연준(Fed)은 10월 FOMC에서 기준금리를 <strong class='text-sky-300'>연 3.75%~4.00%로 동결(10대 2 표결)</strong>하며 뉴욕 3대 지수 강보합 마감."
-            ]
-          },
-          {
-            num: "02",
-            color: "sky",
-            jumpChapter: 1,
-            title: "SK하이닉스 분기 매출 100조 돌파 & 100조 원 주주환원 전격 발표",
-            bullets: [
-              "SK하이닉스 3분기 매출 <strong class='text-emerald-400'>104.6조 원(+327.9%)·영업이익 83.3조 원</strong> 달성, 2029년까지 3년 치 D램·HBM 사실상 완판.",
-              "솔리다임 나스닥 상장 검토 중단 및 <strong class='text-amber-300'>총 100조 원 규모 주주환원(3분기 주당 배당 2만 원)</strong> 전격 발표."
-            ]
-          },
-          {
-            num: "03",
-            color: "amber",
-            jumpChapter: 2,
-            title: "연말정산 연금계좌 세액공제 OX 5대 원칙 & 가상자산 과세 유예",
-            bullets: [
-              "연금저축·IRP 합산 세액공제 한도는 <strong class='text-teal-300'>연 900만 원(최대 148.5만 원 환급)</strong>, 12월 일시납 인정, 소득 기준(총급여 5,500만 원)에 따라 16.5%/13.2% 공제.",
-              "정부는 내년 1월 시행 예정이던 <strong class='text-sky-300'>가상자산 소득 과세를 추가 유예</strong>하는 방향으로 잠정 결론."
-            ]
-          },
-          {
-            num: "04",
-            color: "rose",
-            jumpChapter: 3,
-            title: "조희대 대법원장 국정조사 추진, 고리 3·4호기 계속운전 & 상생소비복권",
-            bullets: [
-              "더불어민주당이 헌정사상 첫 조희대 대법원장 국정조사 추진 공식화, 원안위는 <strong class='text-emerald-400'>고리원전 3·4호기 계속운전 허가</strong>.",
-              "디지털온누리 결제 시 자동 응모되는 상생소비복권(1등 3,000만 원), 비만치료제 3종(마운자로·위고비·에페) 효과·가격 비교."
-            ]
-          }
-        ],
-        chapters: [
-          {
-            id: 0,
-            shortBadge: "1부",
-            badge: "PART 1 / 5 · 마켓 & FOMC 금리 동결 (10/29)",
-            title: "1부. 코스피 사상 첫 6,000선 돌파(6,012.44) & 미 연준 기준금리 동결",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                SK하이닉스의 사상 최대 실적과 100조 원 주주환원 발표에 힘입어 매수 사이드카가 발동되며 <strong class="text-emerald-400">코스피가 6,012.44(+6.63%, ▲374.10)</strong>로 6,000선을 돌파했습니다. 간밤 미 연준(Fed)은 기준금리를 <strong class="text-sky-300">연 3.75%~4.00%로 동결</strong>했으며 S&amp;P500(+0.28%)과 나스닥(+0.27%)은 강보합 마감했습니다. 국제유가(WTI)는 이란의 조건부 종전 의지 표명으로 배럴당 $99.90으로 내려왔습니다.
-              </div>
-            `,
-            sentences: [
-              "10월 29일 목요일 모닝 라디오 브리핑입니다. 어제 우리 증시는 SK하이닉스와 삼성전자의 폭발적인 상승세에 힘입어 코스피가 6.63% 급등한 6,012.44로 사상 처음 6,000시대를 열었습니다.",
-              "간밤 미국 연준은 10월 FOMC에서 기준금리를 연 3.75에서 4.00%로 동결하며 시장에 안도감을 주었습니다."
-            ]
-          },
-          {
-            id: 1,
-            shortBadge: "2부",
-            badge: "PART 2 / 5 · SK하이닉스 100조 주주환원 (10/29)",
-            title: "2부. SK하이닉스 분기 매출 100조 돌파 & 100조 원 주주환원 카드",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                SK하이닉스가 3분기 매출 104조 6,155억 원(+327.9%), 영업이익 83조 3,338억 원을 기록하며 2029년까지 향후 3년 치 D램·HBM 물량이 사실상 완판되었다고 밝혔습니다. 특히 솔리다임 나스닥 상장 검토를 중단하고 총 <strong class="text-amber-300">100조 원 규모의 주주환원책(3분기 주당 배당금 2만 원)</strong>을 발표했습니다. 삼성전기도 영업익 +165%로 분기 최대 실적을 달성했고, 네이버는 브룩필드와 11.9조 원 규모 AI 인프라 계약을 체결했습니다.
-              </div>
-            `,
-            sentences: [
-              "두 번째 코너입니다. SK하이닉스가 3분기 매출 104조 원, 영업이익 83조 원으로 역대 최대 실적을 경신한 데 이어, 2029년까지 3년 치 메모리 물량이 완판되었다며 총 100조 원 규모의 파격적인 주주환원책을 발표했습니다."
-            ]
-          },
-          {
-            id: 2,
-            shortBadge: "3부",
-            badge: "PART 3 / 5 · 연말정산 연금 OX 5대 원칙 (10/29)",
-            title: "3부. 연말정산 연금계좌 세액공제 OX 5대 체크포인트 & 디레이팅 해설",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                <strong class="text-teal-300">• 연금계좌 세액공제 5대 원칙 (연금술사 475호):</strong> ① 연금저축(600만 한도)과 IRP를 합산해 <strong class="text-white">연 900만 원</strong>까지만 세액공제 대상, ② 12월 일시납도 당해 공제 인정, ③ 퇴직금 원금은 공제 제외(추가 납입분만 공제), ④ 총급여 5,500만 원 이하 16.5% / 초과 13.2% 공제율 차등, ⑤ 결정세액이 0원이면 추가 환급 없음. 한편 정부는 내년 1월 예정이던 가상자산 과세를 추가 유예하기로 잠정 결론 내렸습니다.
-              </div>
-            `,
-            sentences: [
-              "세 번째 코너는 연말정산 연금 세액공제 핵심 원칙입니다. 연금저축과 IRP를 합쳐 연간 최대 900만 원까지 세액공제를 받을 수 있고 12월에 한꺼번에 납입해도 공제가 인정되니 연말 전에 납입 한도를 꼭 점검해 보시기 바랍니다."
-            ]
-          },
-          {
-            id: 3,
-            shortBadge: "4부",
-            badge: "PART 4 / 5 · 정치 · 사법 · 원전 · 보안 (10/29)",
-            title: "4부. 조희대 대법원장 국정조사 추진, 고리 3·4호기 계속운전 허가 & 구글·애플 과징금",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                더불어민주당이 헌정사상 첫 조희대 대법원장 국정조사 추진을 공식화하며 여야가 대립했고, 대법원은 김건희 씨 추가 구속영장을 발부해 구속 기간이 12월 말까지 연장되었습니다. 원자력안전위원회는 부산 고리원전 3·4호기의 계속운전을 허가했으며, 방미통위는 인앱결제를 강제한 구글(429억 원)·애플(208억 원)에 과징금을 부과했습니다.
-              </div>
-            `,
-            sentences: [
-              "네 번째 코너입니다. 정치권에서는 조희대 대법원장 국정조사 추진을 두고 여야가 맞섰고, 원자력안전위원회는 설계수명 40년을 채운 고리원전 3, 4호기의 계속운전을 최종 허가했습니다."
-            ]
-          },
-          {
-            id: 4,
-            shortBadge: "5부",
-            badge: "PART 5 / 5 · 생활경제 · 글로벌 문화 (10/29)",
-            title: "5부. 디지털온누리 상생소비복권, 비만치료제 3종 비교 & 핀란드 강아지 슬로우 TV",
-            summaryCardHtml: `
-              <div class="bg-slate-900/90 border border-slate-700/80 rounded-xl p-3.5 text-xs text-slate-200 leading-relaxed">
-                11월 15일까지 디지털온누리로 3만 원 이상 결제 시 자동 응모되는 '상생소비복권(1등 10명 각 3,000만 원)'이 진행 중이며, 비만치료제 3종은 감량 효과 순이 '마운자로 &gt; 위고비 &gt; 국산 에페', 저렴한 가격 순은 '에페 &lt; 위고비 &lt; 마운자로'로 분석되었습니다. 해외에서는 핀란드 공영방송의 강아지 24시간 생중계 슬로우 TV '펜툴리베'가 185만 명 시청을 돌파하며 화제를 모았습니다.
-              </div>
-            `,
-            sentences: [
-              "마지막 다섯 번째 코너입니다. 11월 15일까지 디지털온누리 상품권으로 3만 원 이상 결제하면 1등 당첨금 3,000만 원의 상생소비복권에 자동 응모되며, 비만치료제 마운자로와 위고비, 국산 에페의 가격 및 효과 비교 소식까지 전해드렸습니다. 이상으로 10월 29일 브리핑을 마칩니다."
-            ]
-          }
-        ]
+    // [핵심] 화면을 그리기 전(0.001초)에 스마트폰에 저장된 최신 브리핑을 먼저 꺼내 배열에 장착
+    try {
+      const cachedRaw = localStorage.getItem(CACHE_KEY);
+      if (cachedRaw) {
+        const parsed = JSON.parse(cachedRaw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          parsed.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+          briefingsByDate = parsed;
+        }
       }
-    ];
+    } catch (e) {
+      console.warn("로컬 캐시 읽기 패스:", e);
+    }
+
+    if (briefingsByDate.length === 0) {
+      briefingsByDate = [LOADING_PLACEHOLDER];
+    }
 
     // =========================================================================
-    // STATE & RUNTIME LOGIC
+    // 2. 상태 관리 및 플레이어/UI 렌더링 로직
     // =========================================================================
-    let currentDateIndex = 0; // Default to index 0
-    let chapters = briefingsByDate[0].chapters;
+    let currentDateIndex = 0;
+    let chapters = briefingsByDate[0].chapters || [];
     let flatQueue = [];
 
     function rebuildFlatQueue() {
       flatQueue = [];
       chapters.forEach((ch, cIdx) => {
-        ch.sentences.forEach((text, sIdx) => {
+        (ch.sentences || []).forEach((text, sIdx) => {
           flatQueue.push({
             chapterIndex: cIdx,
             sentenceIndex: sIdx,
@@ -1858,6 +395,26 @@
     let isCompactMode = false;
     let manualPlayerOverride = null;
 
+    function showSyncBadge(text, isSuccess = false) {
+      const badge = document.getElementById("gas-sync-badge");
+      if (!badge) return;
+      badge.classList.remove("hidden");
+      badge.style.opacity = "1";
+      badge.style.color = isSuccess ? "#34d399" : "#38bdf8";
+      badge.style.borderColor = isSuccess ? "rgba(52,211,153,0.4)" : "rgba(56,189,248,0.4)";
+      badge.textContent = text;
+    }
+
+    function hideSyncBadge(delay = 1500) {
+      setTimeout(() => {
+        const badge = document.getElementById("gas-sync-badge");
+        if (badge) {
+          badge.style.opacity = "0";
+          setTimeout(() => badge.classList.add("hidden"), 300);
+        }
+      }, delay);
+    }
+
     function applyPlayerCompactState(compact) {
       isCompactMode = compact;
       const stickyEl = document.getElementById("stickyPlayer");
@@ -1881,12 +438,8 @@
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
-        if (!sharedAudioCtx) {
-          sharedAudioCtx = new AudioCtx();
-        }
-        if (sharedAudioCtx.state === "suspended") {
-          sharedAudioCtx.resume();
-        }
+        if (!sharedAudioCtx) sharedAudioCtx = new AudioCtx();
+        if (sharedAudioCtx.state === "suspended") sharedAudioCtx.resume();
         const notes = [523.25, 659.25, 783.99];
         notes.forEach((freq, idx) => {
           const osc = sharedAudioCtx.createOscillator();
@@ -1915,13 +468,10 @@
         activeUtterance = null;
       }
       if (synth) {
-        try {
-          synth.cancel();
-        } catch (e) {}
+        try { synth.cancel(); } catch (e) {}
       }
     }
 
-    // Render Date Selector Bar & Dropdown
     function renderDateSelector() {
       const pillsContainer = document.getElementById("datePillsContainer");
       const dropdown = document.getElementById("dateSelectDropdown");
@@ -1933,7 +483,6 @@
       briefingsByDate.forEach((b, idx) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.setAttribute("data-date-idx", idx);
         const iconPrefix = b.isWeekly ? "📊 " : "📌 ";
         if (idx === currentDateIndex) {
           btn.className = b.isWeekly
@@ -1951,7 +500,7 @@
 
         const opt = document.createElement("option");
         opt.value = String(idx);
-        opt.textContent = `${b.date} (${b.shortLabel.split(" ")[1].replace(/[()]/g, "")}) 브리핑`;
+        opt.textContent = `${b.date} (${b.shortLabel})`;
         if (idx === currentDateIndex) opt.selected = true;
         dropdown.appendChild(opt);
       });
@@ -1962,7 +511,7 @@
       const grid = document.getElementById("execCardsGrid");
       const titleEl = document.getElementById("execSectionTitle");
       if (titleEl) {
-        titleEl.textContent = `${b.shortLabel} 4대 핵심 브리핑 요약 카드 (프레젠테이션 1페이지)`;
+        titleEl.textContent = `${b.shortLabel} 핵심 브리핑 요약 카드`;
       }
       if (!grid) return;
       grid.innerHTML = "";
@@ -1980,24 +529,21 @@
         amber: "bg-amber-500/20 text-amber-300"
       };
 
-      b.execCards.forEach(c => {
+      (b.execCards || []).forEach(c => {
         const card = document.createElement("div");
-        card.setAttribute("data-jump-chapter", c.jumpChapter);
         card.className = `exec-card cursor-pointer bg-[#131c31] hover:bg-[#17223b] border border-slate-800 border-t-4 ${borderMap[c.color] || "border-t-teal-400"} rounded-xl p-4 transition`;
         card.innerHTML = `
           <div class="flex items-center gap-2 mb-2.5">
-            <span class="px-2 py-0.5 rounded ${badgeMap[c.color] || "bg-teal-500/20 text-teal-300"} text-xs font-extrabold">${c.num}</span>
-            <h3 class="text-sm font-extrabold text-white">${c.title}</h3>
+            <span class="px-2 py-0.5 rounded ${badgeMap[c.color] || "bg-teal-500/20 text-teal-300"} text-xs font-extrabold">${c.num || "01"}</span>
+            <h3 class="text-sm font-extrabold text-white">${c.title || ""}</h3>
           </div>
           <ul class="text-xs text-slate-300 space-y-2 leading-relaxed">
-            ${c.bullets.map(bul => `<li>• ${bul}</li>`).join("")}
+            ${(c.bullets || []).map(bul => `<li>• ${bul}</li>`).join("")}
           </ul>
         `;
         card.addEventListener("click", () => {
-          const targetEl = document.getElementById("chapter-card-" + c.jumpChapter);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
+          const targetEl = document.getElementById("chapter-card-" + (c.jumpChapter || 0));
+          if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
         });
         grid.appendChild(card);
       });
@@ -2009,18 +555,16 @@
       isPaused = false;
       currentDateIndex = Math.max(0, Math.min(dateIdx, briefingsByDate.length - 1));
       const b = briefingsByDate[currentDateIndex];
-      chapters = b.chapters;
+      chapters = b.chapters || [];
       rebuildFlatQueue();
       currentGlobalIndex = 0;
 
-      Object.keys(scriptOpenState).forEach(k => {
-        scriptOpenState[k] = false;
-      });
+      Object.keys(scriptOpenState).forEach(k => { scriptOpenState[k] = false; });
       updateGlobalScriptToggleLabel();
 
-      document.getElementById("headerDateLabel").textContent = b.badgeText;
-      document.getElementById("headerMainTitle").textContent = b.mainTitle;
-      document.getElementById("headerSubTitle").textContent = b.subTitle;
+      document.getElementById("headerDateLabel").textContent = b.badgeText || "";
+      document.getElementById("headerMainTitle").textContent = b.mainTitle || "";
+      document.getElementById("headerSubTitle").textContent = b.subTitle || "";
       if (b.tabLabels) {
         b.tabLabels.forEach((lbl, idx) => {
           const el = document.getElementById("tabLabel" + idx);
@@ -2034,18 +578,21 @@
       updateUIHighlight();
     }
 
+    // 호환성을 위해 selectDate 별칭 함수도 함께 제공
+    const selectDate = selectDateBriefing;
+
     function toggleChapterScript(cIdx) {
       scriptOpenState[cIdx] = !scriptOpenState[cIdx];
       const drawer = document.getElementById("script-drawer-" + cIdx);
       const toggleBtn = document.getElementById("toggle-script-btn-" + cIdx);
-      if (drawer && toggleBtn) {
+      if (drawer && toggleBtn && chapters[cIdx]) {
         if (scriptOpenState[cIdx]) {
           drawer.classList.remove("hidden");
           toggleBtn.innerHTML = `🎙️ 아나운서 대본 접기 ▲`;
           toggleBtn.className = "toggle-script-btn px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-teal-300 border border-teal-500/40 text-xs font-semibold transition";
         } else {
           drawer.classList.add("hidden");
-          toggleBtn.innerHTML = `🎙️ 아나운서 대본 펼치기 (${chapters[cIdx].sentences.length}문장) ▼`;
+          toggleBtn.innerHTML = `🎙️ 아나운서 대본 펼치기 (${(chapters[cIdx].sentences || []).length}문장) ▼`;
           toggleBtn.className = "toggle-script-btn px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-700/80 text-slate-300 border border-slate-700 text-xs font-semibold transition";
         }
       }
@@ -2053,11 +600,9 @@
     }
 
     function updateGlobalScriptToggleLabel() {
-      const allOpen = chapters.every((_, idx) => scriptOpenState[idx]);
+      const allOpen = chapters.length > 0 && chapters.every((_, idx) => scriptOpenState[idx]);
       const btn = document.getElementById("toggleAllScriptsBtn");
-      if (btn) {
-        btn.textContent = allOpen ? "전체 대본 접기 ▲" : "전체 대본 펼치기";
-      }
+      if (btn) btn.textContent = allOpen ? "전체 대본 접기 ▲" : "전체 대본 펼치기";
     }
 
     function toggleAllScripts() {
@@ -2074,7 +619,7 @@
             toggleBtn.className = "toggle-script-btn px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-teal-300 border border-teal-500/40 text-xs font-semibold transition";
           } else {
             drawer.classList.add("hidden");
-            toggleBtn.innerHTML = `🎙️ 아나운서 대본 펼치기 (${chapters[idx].sentences.length}문장) ▼`;
+            toggleBtn.innerHTML = `🎙️ 아나운서 대본 펼치기 (${(chapters[idx].sentences || []).length}문장) ▼`;
             toggleBtn.className = "toggle-script-btn px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-700/80 text-slate-300 border border-slate-700 text-xs font-semibold transition";
           }
         }
@@ -2090,16 +635,17 @@
         section.id = "chapter-card-" + cIdx;
         section.className = "bg-slate-800/75 border border-slate-700/90 rounded-2xl p-4 sm:p-5 transition";
 
+        const sents = ch.sentences || [];
         const header = document.createElement("div");
         header.className = "flex flex-wrap items-center justify-between gap-2 mb-3.5 pb-3 border-b border-slate-700/80";
         header.innerHTML = `
           <div>
-            <span class="text-[11px] font-bold text-teal-400 uppercase tracking-wider">${ch.badge}</span>
-            <h3 class="text-base sm:text-lg font-extrabold text-white mt-0.5">${ch.title}</h3>
+            <span class="text-[11px] font-bold text-teal-400 uppercase tracking-wider">${ch.badge || ""}</span>
+            <h3 class="text-base sm:text-lg font-extrabold text-white mt-0.5">${ch.title || ""}</h3>
           </div>
           <div class="flex items-center gap-2">
             <button type="button" id="toggle-script-btn-${cIdx}" data-toggle-script="${cIdx}" class="toggle-script-btn px-3 py-1.5 rounded-lg bg-slate-900/90 hover:bg-slate-700/80 text-slate-300 border border-slate-700 text-xs font-semibold transition">
-              🎙️ 아나운서 대본 펼치기 (${ch.sentences.length}문장) ▼
+              🎙️ 아나운서 대본 펼치기 (${sents.length}문장) ▼
             </button>
             <button type="button" data-play-chapter="${cIdx}" class="play-chapter-btn shrink-0 px-3 py-1.5 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 text-teal-300 border border-teal-500/40 text-xs font-bold transition">
               ▶ ${cIdx + 1}부 듣기
@@ -2110,7 +656,7 @@
 
         const visualCard = document.createElement("div");
         visualCard.className = "mb-1";
-        visualCard.innerHTML = ch.summaryCardHtml;
+        visualCard.innerHTML = ch.summaryCardHtml || "";
         section.appendChild(visualCard);
 
         const drawer = document.createElement("div");
@@ -2119,23 +665,20 @@
 
         const drawerHeader = document.createElement("div");
         drawerHeader.className = "flex items-center justify-between text-xs text-teal-300 font-bold mb-2";
-        drawerHeader.innerHTML = `
-          <span>🎙️ ${cIdx + 1}부 아나운서 라디오 낭독 대본 (문장을 터치하면 해당 문장부터 읽어드립니다)</span>
-        `;
+        drawerHeader.innerHTML = `<span>🎙️ ${cIdx + 1}부 아나운서 라디오 낭독 대본 (문장 터치 시 해당 문장부터 재생)</span>`;
         drawer.appendChild(drawerHeader);
 
         const list = document.createElement("div");
         list.className = "space-y-2 text-xs sm:text-sm text-slate-300 leading-relaxed";
 
-        ch.sentences.forEach((sentence, sIdx) => {
+        sents.forEach((sentence, sIdx) => {
           const item = flatQueue.find(q => q.chapterIndex === cIdx && q.sentenceIndex === sIdx);
+          if (!item) return;
           const p = document.createElement("p");
           p.id = "sentence-" + item.globalIndex;
           p.className = "cursor-pointer rounded-lg py-1.5 px-2.5 hover:bg-slate-800 transition";
           p.textContent = sentence;
-          p.addEventListener("click", () => {
-            startPlaybackFrom(item.globalIndex, false);
-          });
+          p.addEventListener("click", () => startPlaybackFrom(item.globalIndex, false));
           list.appendChild(p);
         });
 
@@ -2148,9 +691,7 @@
         btn.addEventListener("click", () => {
           const cIdx = parseInt(btn.getAttribute("data-play-chapter"), 10);
           const firstItem = flatQueue.find(q => q.chapterIndex === cIdx);
-          if (firstItem) {
-            startPlaybackFrom(firstItem.globalIndex, true);
-          }
+          if (firstItem) startPlaybackFrom(firstItem.globalIndex, true);
         });
       });
 
@@ -2173,27 +714,26 @@
           const opt = document.createElement("option");
           opt.value = v.voiceURI;
           opt.textContent = v.name;
-          if (idx === 0 && !selectedVoiceURI) {
-            selectedVoiceURI = v.voiceURI;
-          }
+          if (idx === 0 && !selectedVoiceURI) selectedVoiceURI = v.voiceURI;
           voiceSelect.appendChild(opt);
         });
       }
     }
 
     function updateUIHighlight() {
+      if (flatQueue.length === 0) return;
       const currentItem = flatQueue[currentGlobalIndex] || flatQueue[0];
-      const ch = chapters[currentItem.chapterIndex];
+      const ch = chapters[currentItem.chapterIndex] || chapters[0];
       const curBriefing = briefingsByDate[currentDateIndex];
       const pct = Math.round(((currentGlobalIndex + 1) / flatQueue.length) * 100);
 
-      document.getElementById("currentPartBadge").textContent = `[${curBriefing.shortLabel}] ` + ch.badge;
-      document.getElementById("currentTrackTitle").textContent = ch.title;
-      document.getElementById("progressCounter").textContent = `코너 ${currentItem.chapterIndex + 1}/5 · 문장 ${currentGlobalIndex + 1}/${flatQueue.length}`;
+      document.getElementById("currentPartBadge").textContent = `[${curBriefing.shortLabel}] ` + (ch.badge || "");
+      document.getElementById("currentTrackTitle").textContent = ch.title || "";
+      document.getElementById("progressCounter").textContent = `코너 ${currentItem.chapterIndex + 1}/${chapters.length} · 문장 ${currentGlobalIndex + 1}/${flatQueue.length}`;
       document.getElementById("progressBar").style.width = pct + "%";
 
-      document.getElementById("miniPartBadge").textContent = `${curBriefing.shortLabel.split(" ")[0]} · ${ch.shortBadge}`;
-      document.getElementById("miniTrackTitle").textContent = ch.title;
+      document.getElementById("miniPartBadge").textContent = `${(curBriefing.shortLabel || "").split(" ")[0]} · ${ch.shortBadge || "1부"}`;
+      document.getElementById("miniTrackTitle").textContent = ch.title || "";
       document.getElementById("miniProgressBar").style.width = pct + "%";
       document.getElementById("miniSpeedBtn").textContent = speechRate + "x";
 
@@ -2208,9 +748,7 @@
         }
       });
 
-      document.querySelectorAll("[id^='sentence-']").forEach(el => {
-        el.classList.remove("active-sentence");
-      });
+      document.querySelectorAll("[id^='sentence-']").forEach(el => el.classList.remove("active-sentence"));
       const activeEl = document.getElementById("sentence-" + currentGlobalIndex);
       if (activeEl) {
         activeEl.classList.add("active-sentence");
@@ -2277,7 +815,7 @@
         isPaused = false;
         currentGlobalIndex = 0;
         updateUIHighlight();
-        document.getElementById("statusText").textContent = "✅ 선택한 날짜의 모닝 라디오 브리핑(1부~5부) 재생이 완료되었습니다.";
+        document.getElementById("statusText").textContent = "✅ 선택한 날짜의 모닝 라디오 브리핑 재생이 완료되었습니다.";
         return;
       }
 
@@ -2287,7 +825,6 @@
 
       speakTimer = setTimeout(() => {
         if (myToken !== playbackToken || !isPlaying || isPaused) return;
-
         const item = flatQueue[currentGlobalIndex];
         const utter = new SpeechSynthesisUtterance(item.text);
         utter.lang = "ko-KR";
@@ -2313,9 +850,7 @@
 
         utter.onerror = (ev) => {
           if (myToken !== playbackToken) return;
-          if (ev && (ev.error === "canceled" || ev.error === "interrupted")) {
-            return;
-          }
+          if (ev && (ev.error === "canceled" || ev.error === "interrupted")) return;
           if (isPlaying && !isPaused) {
             currentGlobalIndex += 1;
             speakCurrentSentence();
@@ -2323,9 +858,7 @@
         };
 
         activeUtterance = utter;
-        try {
-          synth.speak(utter);
-        } catch (e) {}
+        try { synth.speak(utter); } catch (e) {}
       }, 60);
     }
 
@@ -2390,8 +923,57 @@
       }
     }
 
+    // =========================================================================
+    // 3. 백그라운드 실시간 구글 드라이브(GAS) 동기화 함수
+    // =========================================================================
+    async function syncLatestBriefings() {
+      if (!GAS_AUTO_UPDATE_URL || GAS_AUTO_UPDATE_URL.indexOf("여기에") !== -1) return;
+      try {
+        showSyncBadge("🔄 최신 브리핑 확인 중...");
+        const res = await fetch(GAS_AUTO_UPDATE_URL + "?t=" + Date.now());
+        const remoteDays = await res.json();
+
+        if (Array.isArray(remoteDays) && remoteDays.length > 0) {
+          remoteDays.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+          const prevTopDate = briefingsByDate[0] ? briefingsByDate[0].date : "";
+          const prevCount = briefingsByDate[0] && briefingsByDate[0].date === "loading" ? 0 : briefingsByDate.length;
+
+          // 스마트폰 로컬 캐시에 최신 데이터 전체 저장 (다음 실행 시 0.01초 만에 즉시 표시됨)
+          localStorage.setItem(CACHE_KEY, JSON.stringify(remoteDays));
+          briefingsByDate = remoteDays;
+
+          // 로딩 상태였거나 새로운 날짜가 추가된 경우에만 화면 전환 (이미 최신이면 깜빡임 없음!)
+          if (prevTopDate === "loading" || remoteDays[0].date !== prevTopDate || remoteDays.length !== prevCount) {
+            selectDateBriefing(0);
+            showSyncBadge("✅ 최신 브리핑 업데이트 완료!", true);
+          } else {
+            showSyncBadge("✨ 최신 브리핑 상태입니다", true);
+          }
+        }
+        hideSyncBadge(1500);
+      } catch (err) {
+        console.warn("동기화 확인 중:", err);
+        hideSyncBadge(500);
+      }
+    }
+
+    // =========================================================================
+    // 4. 앱 초기화 및 이벤트 연결
+    // =========================================================================
     window.addEventListener("DOMContentLoaded", () => {
+      // 1) 캐시된 최신 브리핑 즉시 렌더링 (6일자 깜빡임 원천 차단)
       selectDateBriefing(0);
+
+      // 2) 백그라운드에서 구글 드라이브 최신본 확인
+      syncLatestBriefings();
+
+      // 3) 앱을 켜둔 채로 화면만 껐다 켰을 때도 자동으로 새 브리핑 확인
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          syncLatestBriefings();
+        }
+      });
 
       if (synth) {
         populateVoices();
@@ -2442,13 +1024,9 @@
         const y = window.scrollY || document.documentElement.scrollTop || 0;
         if (y < 60) {
           if (manualPlayerOverride === "full") manualPlayerOverride = null;
-          if (manualPlayerOverride !== "mini" && isCompactMode) {
-            applyPlayerCompactState(false);
-          }
+          if (manualPlayerOverride !== "mini" && isCompactMode) applyPlayerCompactState(false);
         } else if (y > 125) {
-          if (manualPlayerOverride !== "full" && !isCompactMode) {
-            applyPlayerCompactState(true);
-          }
+          if (manualPlayerOverride !== "full" && !isCompactMode) applyPlayerCompactState(true);
         }
       }, { passive: true });
 
@@ -2473,9 +1051,7 @@
 
       document.getElementById("voiceSelect").addEventListener("change", (e) => {
         selectedVoiceURI = e.target.value;
-        if (isPlaying && !isPaused) {
-          speakCurrentSentence();
-        }
+        if (isPlaying && !isPaused) speakCurrentSentence();
       });
 
       document.querySelectorAll(".chapter-tab").forEach(tab => {
@@ -2483,71 +1059,11 @@
           const cIdx = parseInt(tab.getAttribute("data-chapter"), 10);
           const firstItem = flatQueue.find(q => q.chapterIndex === cIdx);
           const cardEl = document.getElementById("chapter-card-" + cIdx);
-          if (cardEl) {
-            cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-          if (firstItem) {
-            startPlaybackFrom(firstItem.globalIndex, true);
-          }
+          if (cardEl) cardEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (firstItem) startPlaybackFrom(firstItem.globalIndex, true);
         });
       });
     });
-        // =========================================================================
-    // [자동 업데이트 수신기] 구글 앱스 스크립트(GAS)에서 최신 브리핑을 받아와 자동 병합
-    // =========================================================================
-    const GAS_AUTO_UPDATE_URL = "https://script.google.com/macros/s/AKfycbwZkLE8EXiBiccpCbw2R4X9GljepW4QG04oBgRFnk8wpfK-Tc1lM9iFwDlA6jNB1NkS7Q/exec";
-
-    const CACHE_KEY = "yj_briefing_cache_v2";
-
-// [핵심 1] 화면을 그리기 전에 스마트폰에 저장된 최신 데이터를 0.001초 만에 맨 앞에 먼저 끼워 넣음
-try {
-  const saved = localStorage.getItem(CACHE_KEY);
-  if (saved) {
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      const currentDates = briefingsByDate.map(function(b) { return b.date; });
-      for (let i = parsed.length - 1; i >= 0; i--) {
-        if (parsed[i] && parsed[i].date && currentDates.indexOf(parsed[i].date) === -1) {
-          briefingsByDate.unshift(parsed[i]);
-        }
-      }
-      if (typeof selectDate === "function") {
-        selectDate(0);
-      }
-    }
-  }
-} catch (e) {
-  console.log("캐시 초기 로드 패스");
-}
-
-// [핵심 2] 백그라운드에서 구글 드라이브(GAS) 데이터 가져와서 저장하기
-async function syncLatestBriefings() {
-  if (!GAS_AUTO_UPDATE_URL || GAS_AUTO_UPDATE_URL.indexOf("여기에") !== -1) return;
-  try {
-    const res = await fetch(GAS_AUTO_UPDATE_URL);
-    const newDays = await res.json();
-    if (Array.isArray(newDays) && newDays.length > 0) {
-      // 스마트폰에 최신 데이터 통째로 영구 저장 (다음번 앱 켤 때 6일자 대신 이게 바로 뜸)
-      localStorage.setItem(CACHE_KEY, JSON.stringify(newDays));
-
-      const existingDates = briefingsByDate.map(function(b) { return b.date; });
-      const toAdd = newDays.filter(function(d) {
-        return d && d.date && existingDates.indexOf(d.date) === -1;
-      });
-
-      // 진짜로 새로운 날짜가 있을 때만 화면 갱신 (이미 최신이면 화면 깜빡임 없음!)
-      if (toAdd.length > 0) {
-        briefingsByDate.unshift.apply(briefingsByDate, toAdd);
-        selectDate(0);
-      }
-    }
-  } catch (err) {
-    console.warn("동기화 확인 중:", err);
-  }
-}
-
-window.addEventListener("DOMContentLoaded", syncLatestBriefings);
-</script>
+  </script>
 </body>
 </html>
-
