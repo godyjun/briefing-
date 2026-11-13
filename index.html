@@ -321,7 +321,6 @@
     const GAS_AUTO_UPDATE_URL = "https://script.google.com/macros/s/AKfycbwZkLE8EXiBiccpCbw2R4X9GljepW4QG04oBgRFnk8wpfK-Tc1lM9iFwDlA6jNB1NkS7Q/exec";
     const CACHE_KEY = "yj_briefing_live_cache_v3";
 
-    // 캐시가 아예 없는 첫 접속 시 에러를 방지하는 안전한 로딩용 기본 틀
     const LOADING_PLACEHOLDER = {
       date: "loading",
       shortLabel: "동기화 중",
@@ -339,7 +338,6 @@
 
     let briefingsByDate = [];
 
-    // [핵심] 화면을 그리기 전(0.001초)에 스마트폰에 저장된 최신 브리핑을 먼저 꺼내 배열에 장착
     try {
       const cachedRaw = localStorage.getItem(CACHE_KEY);
       if (cachedRaw) {
@@ -578,7 +576,6 @@
       updateUIHighlight();
     }
 
-    // 호환성을 위해 selectDate 별칭 함수도 함께 제공
     const selectDate = selectDateBriefing;
 
     function toggleChapterScript(cIdx) {
@@ -804,6 +801,62 @@
       }
     }
 
+    // [실시간 오디오 발음 교정기] 눈으로 보는 텍스트는 건드리지 않고, 스피커로 읽는 순간에만 자연스러운 한글 발음으로 변환!
+    function formatForNaturalSpeech(rawText) {
+      if (!rawText) return "";
+      let s = rawText;
+
+      // 1. HTML 태그 및 읽을 때 흐름을 끊는 불필요한 출처 괄호·특수기호 정리
+      s = s.replace(/<[^>]+>/g, "");
+      s = s.replace(/\((?:어피티|뉴스핌|매경|뉴닉|한경|블룸버그|로이터|연합)[^)]*\)/g, "");
+      s = s.replace(/[·•]/g, ", ");
+
+      // 2. 금융·경제·IT 핵심 영어 약어 -> 아나운서 표준 한글 발음 사전
+      const dict = [
+        [/S&P\s*500/gi, "에스앤피 오백"],
+        [/NASDAQ/gi, "나스닥"],
+        [/DOW/gi, "다우존스"],
+        [/KOSPI/gi, "코스피"],
+        [/KOSDAQ/gi, "코스닥"],
+        [/FOMC/gi, "에프오엠씨"],
+        [/CPI/g, "씨피아이 소비자물가지수"],
+        [/PPI/g, "생산자물가지수"],
+        [/PCE/g, "개인소비지출"],
+        [/GDP/g, "지디피"],
+        [/ETF/gi, "이티에프"],
+        [/PBR/g, "피비알"],
+        [/PER/g, "피이알"],
+        [/ROE/g, "알오이"],
+        [/FCF/g, "잉여현금흐름"],
+        [/M&A/gi, "엠앤에이"],
+        [/IPO/g, "아이피오"],
+        [/CEO/gi, "씨이오"],
+        [/AIDC/g, "에이아이 데이터센터"],
+        [/AI/g, "에이아이"],
+        [/GPU/gi, "지피유"],
+        [/HBM/gi, "에이치비엠"],
+        [/CDMO/gi, "씨디엠오"],
+        [/LNG/gi, "엘엔지"],
+        [/LCC/gi, "엘씨씨"],
+        [/IRP/gi, "아이알피"],
+        [/ISA/g, "아이에스에이"],
+        [/bp\b/g, "비피"]
+      ];
+      for (let i = 0; i < dict.length; i++) {
+        s = s.replace(dict[i][0], dict[i][1]);
+      }
+
+      // 3. 등락률·부호·범위 기호를 자연스러운 한국어 구어체로 변환
+      s = s.replace(/\+(\d+(?:\.\d+)?)\s*%/g, "$1퍼센트 상승");
+      s = s.replace(/\-(\d+(?:\.\d+)?)\s*%/g, "$1퍼센트 하락");
+      s = s.replace(/(\d+(?:\.\d+)?)\s*%/g, "$1퍼센트");
+      s = s.replace(/\$(\d+(?:,\d+)*(?:\.\d+)?)/g, "$1달러");
+      s = s.replace(/(\d+)\s*~\s*(\d+)/g, "$1에서 $2");
+      s = s.replace(/[\(\[\{]/g, ", ").replace(/[\)\]\}]/g, ", ");
+
+      return s.replace(/\s{2,}/g, " ").trim();
+    }
+
     function speakCurrentSentence() {
       if (!synth) {
         document.getElementById("ttsWarning").classList.remove("hidden");
@@ -826,7 +879,9 @@
       speakTimer = setTimeout(() => {
         if (myToken !== playbackToken || !isPlaying || isPaused) return;
         const item = flatQueue[currentGlobalIndex];
-        const utter = new SpeechSynthesisUtterance(item.text);
+        
+        // ★ 화면에는 item.text 원본이 그대로 보이고, 음성 엔진에만 발음 교정본을 전달합니다!
+        const utter = new SpeechSynthesisUtterance(formatForNaturalSpeech(item.text));
         utter.lang = "ko-KR";
         utter.rate = speechRate;
         utter.pitch = 1.0;
@@ -939,11 +994,9 @@
           const prevTopDate = briefingsByDate[0] ? briefingsByDate[0].date : "";
           const prevCount = briefingsByDate[0] && briefingsByDate[0].date === "loading" ? 0 : briefingsByDate.length;
 
-          // 스마트폰 로컬 캐시에 최신 데이터 전체 저장 (다음 실행 시 0.01초 만에 즉시 표시됨)
           localStorage.setItem(CACHE_KEY, JSON.stringify(remoteDays));
           briefingsByDate = remoteDays;
 
-          // 로딩 상태였거나 새로운 날짜가 추가된 경우에만 화면 전환 (이미 최신이면 깜빡임 없음!)
           if (prevTopDate === "loading" || remoteDays[0].date !== prevTopDate || remoteDays.length !== prevCount) {
             selectDateBriefing(0);
             showSyncBadge("✅ 최신 브리핑 업데이트 완료!", true);
@@ -962,13 +1015,9 @@
     // 4. 앱 초기화 및 이벤트 연결
     // =========================================================================
     window.addEventListener("DOMContentLoaded", () => {
-      // 1) 캐시된 최신 브리핑 즉시 렌더링 (6일자 깜빡임 원천 차단)
       selectDateBriefing(0);
-
-      // 2) 백그라운드에서 구글 드라이브 최신본 확인
       syncLatestBriefings();
 
-      // 3) 앱을 켜둔 채로 화면만 껐다 켰을 때도 자동으로 새 브리핑 확인
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
           syncLatestBriefings();
